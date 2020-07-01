@@ -9,7 +9,7 @@ namespace Reenbit.ChuckNorris.Infrastructure
     {
         private readonly IConfiguration configuration;
 
-        public string DatabaseConnectionStrings => GetConnectionStringValue("DatabaseConnectionString");
+        public string DatabaseConnectionString => GetConnectionStringValue("DatabaseConnectionString");
 
         public ConfigurationManager(IConfiguration configuration)
         {

@@ -6,6 +6,6 @@ namespace Reenbit.ChuckNorris.Infrastructure
 {
     public interface IConfigurationManager
     {
-        string DatabaseConnectionStrings { get; }
+        string DatabaseConnectionString { get; }
     }
 }

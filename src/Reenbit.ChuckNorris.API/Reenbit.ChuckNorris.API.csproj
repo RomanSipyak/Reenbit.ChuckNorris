@@ -9,6 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Reenbit.ChuckNorris.DataAccess.Abstraction\Reenbit.ChuckNorris.DataAccess.Abstraction.csproj" />
+    <ProjectReference Include="..\Reenbit.ChuckNorris.DataAccess\Reenbit.ChuckNorris.DataAccess.csproj" />
     <ProjectReference Include="..\Reenbit.ChuckNorris.Infrastructure\Reenbit.ChuckNorris.Infrastructure.csproj" />
   </ItemGroup>
 
