@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Mapping
 {
-    public class CategoryMap : IEntityTypeConfiguration<Category>
+    class CategoryMap : IEntityTypeConfiguration<Category>
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {

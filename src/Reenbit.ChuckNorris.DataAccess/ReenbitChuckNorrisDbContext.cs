@@ -10,7 +10,6 @@ namespace Reenbit.ChuckNorris.DataAccess
     {
         public ReenbitChuckNorrisDbContext(DbContextOptions<ReenbitChuckNorrisDbContext> options) : base(options) 
         {
-                
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

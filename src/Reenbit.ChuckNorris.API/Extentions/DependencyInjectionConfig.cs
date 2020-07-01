@@ -18,7 +18,6 @@ namespace Reenbit.ChuckNorris.API.Extentions
             return services;
         }
 
-
         public static void RegisterDataAccess(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
@@ -28,6 +27,5 @@ namespace Reenbit.ChuckNorris.API.Extentions
         {
             services.AddTransient<IConfigurationManager, ConfigurationManager>();
         }
-
     }
 }

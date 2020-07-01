@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Mapping
 {
-    public class JokeMap : IEntityTypeConfiguration<Joke>
+    class JokeMap : IEntityTypeConfiguration<Joke>
     {
         public void Configure(EntityTypeBuilder<Joke> builder)
         {
