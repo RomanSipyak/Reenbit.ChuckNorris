@@ -15,12 +15,10 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
             builder.Property(jct => jct.CategoryId).HasColumnName("Joke_Id");
             builder.Property(jct => jct.JokeId).HasColumnName("Category_Id");
 
-            builder.HasKey(jct => jct.Id);
+            builder.HasKey(jct => new { jct.JokeId, jct.CategoryId});
 
             builder.Property(jct => jct.JokeId).IsRequired();
             builder.Property(jct => jct.CategoryId).IsRequired();
-
-            builder.HasIndex(jct => new { jct.JokeId, jct.CategoryId });
         }
     }
 }
