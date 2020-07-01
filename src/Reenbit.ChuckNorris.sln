@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reenbit.ChuckNorris.API", "Reenbit.ChuckNorris.API\Reenbit.ChuckNorris.API.csproj", "{5F79EDA4-72F9-4FBB-9B55-7F9CCB430AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reenbit.ChuckNorris.API", "Reenbit.ChuckNorris.API\Reenbit.ChuckNorris.API.csproj", "{5F79EDA4-72F9-4FBB-9B55-7F9CCB430AB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reenbit.ChuckNorris.DataAccess", "Reenbit.ChuckNorris.DataAccess\Reenbit.ChuckNorris.DataAccess.csproj", "{C1DBBC24-C110-47FD-B4B8-EDD9F50204CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reenbit.ChuckNorris.DataAccess", "Reenbit.ChuckNorris.DataAccess\Reenbit.ChuckNorris.DataAccess.csproj", "{C1DBBC24-C110-47FD-B4B8-EDD9F50204CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reenbit.ChuckNorris.DataAccess.Abstraction", "Reenbit.ChuckNorris.DataAccess.Abstraction\Reenbit.ChuckNorris.DataAccess.Abstraction.csproj", "{27D90D39-76CF-43D5-BED2-4CC36FA5991C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reenbit.ChuckNorris.DataAccess.Abstraction", "Reenbit.ChuckNorris.DataAccess.Abstraction\Reenbit.ChuckNorris.DataAccess.Abstraction.csproj", "{27D90D39-76CF-43D5-BED2-4CC36FA5991C}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Reenbit.ChuckNorris.DataBase", "Reenbit.ChuckNorris.DataBase\Reenbit.ChuckNorris.DataBase.sqlproj", "{8F3C1064-724D-460A-9CBA-E348B0D96F44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reenbit.ChuckNorris.Domain", "Reenbit.ChuckNorris.Domain\Reenbit.ChuckNorris.Domain.csproj", "{68A3E346-4D21-43FC-BD0A-20B51B049591}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reenbit.ChuckNorris.Domain", "Reenbit.ChuckNorris.Domain\Reenbit.ChuckNorris.Domain.csproj", "{68A3E346-4D21-43FC-BD0A-20B51B049591}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reenbit.ChuckNorris.Infrastructure", "Reenbit.ChuckNorris.Infrastructure\Reenbit.ChuckNorris.Infrastructure.csproj", "{7922377A-D551-43E3-BBB1-8DA4486F0FBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reenbit.ChuckNorris.Infrastructure", "Reenbit.ChuckNorris.Infrastructure\Reenbit.ChuckNorris.Infrastructure.csproj", "{7922377A-D551-43E3-BBB1-8DA4486F0FBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reenbit.ChuckNorris.Services", "Reenbit.ChuckNorris.Services\Reenbit.ChuckNorris.Services.csproj", "{39C709BD-AF1E-4445-B398-971C6959D57F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reenbit.ChuckNorris.Services", "Reenbit.ChuckNorris.Services\Reenbit.ChuckNorris.Services.csproj", "{39C709BD-AF1E-4445-B398-971C6959D57F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reenbit.ChuckNorris.Services.Abstraction", "Reenbit.ChuckNorris.Services.Abstraction\Reenbit.ChuckNorris.Services.Abstraction.csproj", "{828EDA31-C199-4BD7-8305-C2F71C3C263F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reenbit.ChuckNorris.Services.Abstraction", "Reenbit.ChuckNorris.Services.Abstraction\Reenbit.ChuckNorris.Services.Abstraction.csproj", "{8F8FA769-0570-4B8D-8C60-A4997396B108}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,10 +55,10 @@ Global
 		{39C709BD-AF1E-4445-B398-971C6959D57F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39C709BD-AF1E-4445-B398-971C6959D57F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39C709BD-AF1E-4445-B398-971C6959D57F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{828EDA31-C199-4BD7-8305-C2F71C3C263F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{828EDA31-C199-4BD7-8305-C2F71C3C263F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{828EDA31-C199-4BD7-8305-C2F71C3C263F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{828EDA31-C199-4BD7-8305-C2F71C3C263F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F8FA769-0570-4B8D-8C60-A4997396B108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F8FA769-0570-4B8D-8C60-A4997396B108}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F8FA769-0570-4B8D-8C60-A4997396B108}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F8FA769-0570-4B8D-8C60-A4997396B108}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -57,4 +57,9 @@
   <ItemGroup>
     <Folder Include="Properties" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="Jokes.sql" />
+    <Build Include="Categories.sql" />
+    <Build Include="JokeCategory.sql" />
+  </ItemGroup>
 </Project>
