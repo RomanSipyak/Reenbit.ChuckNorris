@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[Jokes]
+(
+	[Id] INT IDENTITY(1,1) NOT NULL, 
+    [IconUrl] NVARCHAR(255) NULL, 
+    [Url] NVARCHAR(255) NULL, 
+    [Value] NVARCHAR(2000) NOT NULL  
+    CONSTRAINT [PK_Jokes]  PRIMARY KEY CLUSTERED ([Id] ASC)
+);
