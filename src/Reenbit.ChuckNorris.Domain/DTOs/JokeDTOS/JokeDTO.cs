@@ -15,7 +15,5 @@ namespace Reenbit.ChuckNorris.Domain.DTOs
         public string Url { get; set; }
         [JsonProperty("icon_url")]//TODO need to be fixed (read abour reflection and config mapping profiles better)
         public string IconUrl { get; set; }
-
-       // public ICollection<JokeCategory> JokeCategories { get; set; }
     }
 }

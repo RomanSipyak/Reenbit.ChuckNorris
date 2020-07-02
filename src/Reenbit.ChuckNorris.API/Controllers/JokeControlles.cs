@@ -17,9 +17,12 @@ namespace Reenbit.ChuckNorris.API.Controllers
     {
         private readonly IJokeService jokeService;
 
-        public JokeControlles(IJokeService jokeService)
+        private readonly ICategoryService categoryService;
+
+        public JokeControlles(IJokeService jokeService, ICategoryService categoryService)
         {
             this.jokeService = jokeService;
+            this.categoryService = categoryService;
         }
         //TODO RefactorStatusCodes
         [HttpGet]
@@ -33,7 +36,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Route("categories")]
         public async Task<IActionResult> GetAllCategories()
         {
-            return Ok(await jokeService.GetAllCategoriesAsync());
+            return Ok(await categoryService.GetAllCategoriesAsync());
         }
     }
 }
