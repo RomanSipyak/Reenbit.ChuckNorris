@@ -21,7 +21,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         {
             this.jokeService = jokeService;
         }
-
+        //TODO RefactorStatusCodes
         [HttpGet]
         [Route("random")]
         public async Task<IActionResult> GetRandomJoke([FromQuery][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<string> category)
@@ -29,7 +29,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
             return Ok(await jokeService.GetRundomJokeAsync(category));
         }
     }
-
+    //TODO needed to be extracted
     public class ArrayModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
