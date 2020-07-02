@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Services.Abstraction;
+using Reenbit.ChuckNorris.Services.Helpers.ControllerBinders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,6 +29,11 @@ namespace Reenbit.ChuckNorris.API.Controllers
             return Ok(await jokeService.GetRundomJokeAsync(category, query));
         }
 
+        [HttpGet]
+        [Route("categories")]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            return Ok(await jokeService.GetAllCategoriesAsync());
         }
     }
 }
