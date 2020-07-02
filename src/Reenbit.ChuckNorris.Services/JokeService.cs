@@ -25,13 +25,13 @@ namespace Reenbit.ChuckNorris.Services
             this.mapper = mapper;
         }
 
-        public async Task<JokeDTO> GetRundomJokeAsync(IEnumerable<string> categories)
+        public async Task<JokeDTO> GetRundomJokeAsync(IEnumerable<string> categories, string query)
         {
            using(IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
            {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
-                ICollection<int> jokesIds;
+                ICollection<int> jokesIds = null;
 
                 if (categories != null && categories.Any())
                 {
@@ -52,8 +52,7 @@ namespace Reenbit.ChuckNorris.Services
                     }
                     else
                     {
-                        jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id,
-                                                                        jk => jk.JokeCategories.Any(jck => categories.Any(ct => jck.Category.Title.Equals(ct))));
+                            jokesIds = await GetJokeIds(categories, jokeRepository, jokesIds, query);
                     }
                 }
                 else
@@ -74,6 +73,22 @@ namespace Reenbit.ChuckNorris.Services
                 }
                 return null;
            }
+        }
+
+        private static async Task<ICollection<int>> GetJokeIds(IEnumerable<string> categories,IJokeRepository jokeRepository, ICollection<int> jokesIds, string query = null)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id,
+                                                                jk => jk.JokeCategories.Any(jck => categories.Any(ct => jck.Category.Title.Equals(ct))));
+            }else
+            {
+                query = query.Trim();
+                jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id,
+                                                                jk => jk.JokeCategories.Any(jck => categories.Any(ct => jck.Category.Title.Equals(ct))
+                                                                                                             && jk.Value.Contains(query)));
+            }
+            return jokesIds;
         }
 
         private static int RandomNumber(int number)

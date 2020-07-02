@@ -8,6 +8,6 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 {
     public interface IJokeService
     {
-        Task<JokeDTO> GetRundomJokeAsync(IEnumerable<string> categories);
+        Task<JokeDTO> GetRundomJokeAsync(IEnumerable<string> categories, string query);
     }
 }

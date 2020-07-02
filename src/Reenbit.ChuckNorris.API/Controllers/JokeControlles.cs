@@ -24,9 +24,9 @@ namespace Reenbit.ChuckNorris.API.Controllers
         //TODO RefactorStatusCodes
         [HttpGet]
         [Route("random")]
-        public async Task<IActionResult> GetRandomJoke([FromQuery][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<string> category)
+        public async Task<IActionResult> GetRandomJoke([FromQuery][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<string> category, [FromQuery] string query)
         {
-            return Ok(await jokeService.GetRundomJokeAsync(category));
+            return Ok(await jokeService.GetRundomJokeAsync(category, query));
         }
     }
     //TODO needed to be extracted
