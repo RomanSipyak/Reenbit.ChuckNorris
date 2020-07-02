@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.VisualBasic;
+using Newtonsoft.Json;
+using Reenbit.ChuckNorris.Domain.DTOs.CategoryDTOS;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,5 +17,7 @@ namespace Reenbit.ChuckNorris.Domain.DTOs
         public string Url { get; set; }
         [JsonProperty("icon_url")]//TODO need to be fixed (read abour reflection and config mapping profiles better)
         public string IconUrl { get; set; }
+
+        public ICollection<string> Categories { get; set; }
     }
 }

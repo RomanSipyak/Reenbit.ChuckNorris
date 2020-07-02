@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
 using Reenbit.ChuckNorris.Domain.DTOs;
@@ -7,6 +9,7 @@ using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -68,8 +71,10 @@ namespace Reenbit.ChuckNorris.Services
 
                 if (randomId != null)
                 {
-                    var joke = await jokeRepository.GetByIdAsync(randomId.Value);
-                    return this.mapper.Map<JokeDTO>(joke);
+                    var joke = await jokeRepository.GetByIdWithCategoryIncludeAsync(randomId.Value);
+                    var jokeReturnDto = this.mapper.Map<JokeDTO>(joke);
+                    jokeReturnDto.Categories = joke.JokeCategories?.Select(x => x.Category?.Title).ToList();
+                    return jokeReturnDto;
                 }
                 return null;
            }
