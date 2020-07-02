@@ -88,6 +88,7 @@ namespace Reenbit.ChuckNorris.Services
                                                                 jk => jk.JokeCategories.Any(jck => categories.Any(ct => jck.Category.Title.Equals(ct))
                                                                                                              && jk.Value.Contains(query)));
             }
+
             return jokesIds;
         }
 
