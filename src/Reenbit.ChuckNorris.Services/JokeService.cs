@@ -18,8 +18,11 @@ namespace Reenbit.ChuckNorris.Services
     public class JokeService : IJokeService
     {
         private readonly IUnitOfWorkFactory unitOfWorkFactory;
+
         private readonly IMapper mapper;
+
         private static readonly Random random = new Random();
+
         private static readonly object syncLock = new object();
 
         public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper)
@@ -76,6 +79,7 @@ namespace Reenbit.ChuckNorris.Services
                     jokeReturnDto.Categories = joke.JokeCategories?.Select(x => x.Category?.Title).ToList();
                     return jokeReturnDto;
                 }
+
                 return null;
            }
         }
