@@ -30,7 +30,8 @@ namespace Reenbit.ChuckNorris.API
         {
             services.RegisterDependencies();
             services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfileForDTOs)));
-            services.AddControllers(setupActions => {
+            services.AddControllers(setupActions =>
+            {
                 setupActions.ReturnHttpNotAcceptable = true;
             });
         }

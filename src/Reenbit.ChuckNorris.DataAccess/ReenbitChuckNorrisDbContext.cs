@@ -8,7 +8,7 @@ namespace Reenbit.ChuckNorris.DataAccess
 {
     class ReenbitChuckNorrisDbContext : DbContext
     {
-        public ReenbitChuckNorrisDbContext(DbContextOptions<ReenbitChuckNorrisDbContext> options) : base(options) 
+        public ReenbitChuckNorrisDbContext(DbContextOptions<ReenbitChuckNorrisDbContext> options) : base(options)
         {
         }
 

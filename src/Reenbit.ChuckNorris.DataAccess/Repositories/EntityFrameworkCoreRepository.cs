@@ -54,12 +54,12 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
         public virtual ICollection<TEntity> Find(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            IEnumerable<Expression<Func<TEntity, object>>>  includes = null)
+            IEnumerable<Expression<Func<TEntity, object>>> includes = null)
         {
             return this.GenericFindQuery(filter, orderBy, includes).ToList();
         }
 
-        public virtual async Task<bool> AnyAsync(Expression<Func<TEntity,bool>> filter = null)
+        public virtual async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filter = null)
         {
             return await this.DBSet.AnyAsync(filter);
         }
@@ -95,7 +95,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
         public async Task<TResult> FindByKeyAndMapAsync<TResult>(
            Expression<Func<TEntity, bool>> keyFilter,
            Expression<Func<TEntity, TResult>> selector)
-        { 
+        {
             return await this.GenericFindQuery(keyFilter, null, null).Select(selector).FirstOrDefaultAsync();
         }
 
@@ -126,23 +126,23 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
         }
 
         private IQueryable<TEntity> GenericFindQuery(
-        Expression<Func<TEntity,bool>> filter,
+        Expression<Func<TEntity, bool>> filter,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy,
-        IEnumerable<Expression<Func<TEntity,object>>> includes )
+        IEnumerable<Expression<Func<TEntity, object>>> includes)
         {
             IQueryable<TEntity> query = this.Queryable;
 
-            if(filter != null)
+            if (filter != null)
             {
                 query = query.Where(filter);
             }
 
-            if(includes != null)
+            if (includes != null)
             {
                 query = includes.Aggregate(query, (current, include) => current.Include(include));
             }
 
-            if(orderBy!= null)
+            if (orderBy != null)
             {
                 return orderBy(query);
             }

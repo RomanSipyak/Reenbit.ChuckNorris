@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 {
-    public interface ICategoryRepository : IRepository<Category,int>
+    public interface ICategoryRepository : IRepository<Category, int>
     {
     }
 }

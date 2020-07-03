@@ -28,7 +28,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         public async Task<IActionResult> GetRandomJoke([FromQuery] string category)
         {
             var JokeDto = await jokeService.GetRandomJokeAsync(category);
-            if(JokeDto == null)
+            if (JokeDto == null)
             {
                 return BadRequest();
             }
@@ -41,7 +41,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         public async Task<IActionResult> GetJokesBySearch([FromQuery] string query)
         {
             var JokeDtos = await jokeService.GetJokesBySearch(query);
-            if(JokeDtos == null)
+            if (JokeDtos == null)
             {
                 return BadRequest();
             }
