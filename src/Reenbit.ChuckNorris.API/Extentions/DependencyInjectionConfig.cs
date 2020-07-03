@@ -20,7 +20,6 @@ namespace Reenbit.ChuckNorris.API.Extentions
     {
         public static IServiceCollection RegisterDependencies(this IServiceCollection services)
         {
-            RegisterAutoMapper(services);
             RegisterInfrastructure(services);
             RegisterServices(services);
             RegisterDataAccess(services);
@@ -43,11 +42,6 @@ namespace Reenbit.ChuckNorris.API.Extentions
         public static void RegisterInfrastructure(this IServiceCollection services)
         {
             services.AddTransient<IConfigurationManager, ConfigurationManager>();
-        }
-
-        public static void RegisterAutoMapper(this IServiceCollection services)
-        {
-            services.AddAutoMapper(Assembly.GetAssembly(typeof(JokeProfile)));
         }
     }
 }

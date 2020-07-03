@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
 {
-    public class JokeProfile : Profile
+    public class MappingProfileForDTOs : Profile
     {
-        public JokeProfile()
+        public MappingProfileForDTOs()
         {
             CreateMap<Joke, JokeDTO>().ReverseMap();
         }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Reenbit.ChuckNorris.API.Extentions;
+using Reenbit.ChuckNorris.Domain.DTOsProfiles;
 
 namespace Reenbit.ChuckNorris.API
 {
@@ -26,6 +29,7 @@ namespace Reenbit.ChuckNorris.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.RegisterDependencies();
+            services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfileForDTOs)));
             services.AddControllers(setupActions => {
                 setupActions.ReturnHttpNotAcceptable = true;
             });
