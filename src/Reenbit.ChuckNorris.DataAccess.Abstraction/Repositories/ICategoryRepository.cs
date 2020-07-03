@@ -10,8 +10,5 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 {
     public interface ICategoryRepository : IRepository<Category,int>
     {
-        public Task<bool> CategoryExistAsync(Expression<Func<Category, bool>> predicate);
-
-        public Task<ICollection<TResult>> GetAllAsync<TResult>(Expression<Func<Category,TResult>> selector);
     }
 }
