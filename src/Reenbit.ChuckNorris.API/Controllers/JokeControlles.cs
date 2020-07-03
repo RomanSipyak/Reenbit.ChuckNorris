@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using Reenbit.ChuckNorris.Services.Helpers.ControllerBinders;
@@ -17,26 +18,43 @@ namespace Reenbit.ChuckNorris.API.Controllers
     {
         private readonly IJokeService jokeService;
 
-        private readonly ICategoryService categoryService;
-
-        public JokeControlles(IJokeService jokeService, ICategoryService categoryService)
+        public JokeControlles(IJokeService jokeService)
         {
             this.jokeService = jokeService;
-            this.categoryService = categoryService;
         }
-        //TODO RefactorStatusCodes
+
         [HttpGet]
         [Route("random")]
-        public async Task<IActionResult> GetRandomJoke([FromQuery][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<string> category, [FromQuery] string query)
+        public async Task<IActionResult> GetRandomJoke([FromQuery] string category)
         {
-            return Ok(await jokeService.GetRundomJokeAsync(category, query));
+            var JokeDto = await jokeService.GetRandomJokeAsync(category);
+            if(JokeDto == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(JokeDto);
+        }
+
+        [HttpGet]
+        [Route("search")]
+        public async Task<IActionResult> GetJokesBySearch([FromQuery] string query)
+        {
+            var JokeDtos = await jokeService.GetJokesBySearch(query);
+            if(JokeDtos == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(JokeDtos);
         }
 
         [HttpGet]
         [Route("categories")]
         public async Task<IActionResult> GetAllCategories()
         {
-            return Ok(await categoryService.GetAllCategoriesAsync());
+            var categories = await jokeService.GetAllCategoriesAsync();
+            return Ok(categories);
         }
     }
 }

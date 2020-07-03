@@ -1,4 +1,5 @@
-﻿using Reenbit.ChuckNorris.Domain.Entities;
+﻿using Reenbit.ChuckNorris.Domain.DTOs;
+using Reenbit.ChuckNorris.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -9,6 +10,6 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 {
     public interface IJokeRepository : IRepository<Joke, int>
     {
-        public Task<Joke> GetByIdWithCategoryIncludeAsync(int id);
+        public Task<JokeDTO> GetJokeDtoByIdWithCategoriesAsync(int id);
     }
 }
