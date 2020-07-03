@@ -54,19 +54,19 @@ namespace Reenbit.ChuckNorris.Services
             ICollection<int> jokesIds = null;
             if (!string.IsNullOrEmpty(category))
             {
-                if (!await categoryRepository.AnyAsync(ct => ct.Title.Equals(category)))
+                if (!await categoryRepository.AnyAsync(c => c.Title.Equals(category)))
                 {
                     throw new ArgumentException($"No jokes for category \"{category}\" found.");
                 }
                 else
                 {
-                    jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id,
-                                                            jk => jk.JokeCategories.Any(jck => jck.Category.Title.Equals(category)));
+                    jokesIds = await jokeRepository.FindAndMapAsync(j => j.Id,
+                                                            j => j.JokeCategories.Any(jc => jc.Category.Title.Equals(category)));
                 }
             }
             else
             {
-                jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id);
+                jokesIds = await jokeRepository.FindAndMapAsync(j => j.Id);
             }
 
             int? randomId = null;
@@ -116,7 +116,7 @@ namespace Reenbit.ChuckNorris.Services
             {
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
 
-                return await categoryRepository.FindAndMapAsync(ct => ct.Title, null, null, null);
+                return await categoryRepository.FindAndMapAsync(c => c.Title, null, null, null);
             }
         }
 

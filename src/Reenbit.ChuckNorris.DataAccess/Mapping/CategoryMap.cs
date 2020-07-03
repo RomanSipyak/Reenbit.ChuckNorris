@@ -13,13 +13,13 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
         {
             builder.ToTable("Categories");
 
-            builder.HasKey(ct => ct.Id);
+            builder.HasKey(c => c.Id);
 
-            builder.HasMany(ct => ct.JokeCategories)
-                   .WithOne(jct => jct.Category)
-                   .HasForeignKey(jct => jct.CategoryId);
+            builder.HasMany(c => c.JokeCategories)
+                   .WithOne(jc => jc.Category)
+                   .HasForeignKey(jc => jc.CategoryId);
 
-            builder.Property(ct => ct.Title)
+            builder.Property(c => c.Title)
                    .IsRequired()
                    .HasMaxLength(50);
         }
