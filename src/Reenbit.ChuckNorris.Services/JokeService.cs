@@ -23,93 +23,109 @@ namespace Reenbit.ChuckNorris.Services
 
         private static readonly Random random = new Random();
 
-        private static readonly object syncLock = new object();
-
         public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.mapper = mapper;
         }
 
-        public async Task<JokeDTO> GetRundomJokeAsync(IEnumerable<string> categories, string query)
+        public async Task<JokeDTO> GetRandomJokeAsync(string category)
         {
-           using(IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
-           {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
-                ICollection<int> jokesIds = null;
+                int? jokeId = null;
 
-                if (categories != null && categories.Any())
+                jokeId = await GetRandomJokeId(category, jokeRepository, categoryRepository);
+
+                if (jokeId != null)
                 {
-                    string unexistedCategory = null;
-
-                    foreach(var category in categories)
-                    {
-                        if(!await categoryRepository.CategoryExistAsync(ct => ct.Title.Equals(category)))
-                        {
-                            unexistedCategory = category;
-                            break;
-                        }
-                    }
-
-                    if(unexistedCategory != null)
-                    {
-                        throw new ArgumentException($"No jokes for category \"{unexistedCategory}\" found.");
-                    }
-                    else
-                    {
-                            jokesIds = await GetJokeIds(categories, jokeRepository, jokesIds, query);
-                    }
-                }
-                else
-                {
-                    jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id);
-                }
-
-                int? randomId = null;
-                if(jokesIds.Count() != 0)
-                {
-                    randomId = GetRundomeElement(jokesIds);
-                }
-
-                if (randomId != null)
-                {
-                    var joke = await jokeRepository.GetByIdWithCategoryIncludeAsync(randomId.Value);
-                    var jokeReturnDto = this.mapper.Map<JokeDTO>(joke);
-                    jokeReturnDto.Categories = joke.JokeCategories?.Select(x => x.Category?.Title).ToList();
-                    return jokeReturnDto;
+                    var joke = await jokeRepository.GetJokeDtoByIdWithCategoriesAsync(jokeId.Value);
+                    return joke;
                 }
 
                 return null;
-           }
+            }
         }
 
-        private static async Task<ICollection<int>> GetJokeIds(IEnumerable<string> categories,IJokeRepository jokeRepository, ICollection<int> jokesIds, string query = null)
+        private async Task<int?> GetRandomJokeId(string category, IJokeRepository jokeRepository, ICategoryRepository categoryRepository)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            ICollection<int> jokesIds = null;
+            if (!string.IsNullOrEmpty(category))
             {
-                jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id,
-                                                                jk => jk.JokeCategories.Any(jck => categories.Any(ct => jck.Category.Title.Equals(ct))));
-            }else
+                if (!await categoryRepository.AnyAsync(ct => ct.Title.Equals(category)))
+                {
+                    throw new ArgumentException($"No jokes for category \"{category}\" found.");
+                }
+                else
+                {
+                    jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id,
+                                                            jk => jk.JokeCategories.Any(jck => jck.Category.Title.Equals(category)));
+                }
+            }
+            else
             {
-                query = query.Trim();
-                jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id,
-                                                                jk => jk.JokeCategories.Any(jck => categories.Any(ct => jck.Category.Title.Equals(ct))
-                                                                                                             && jk.Value.Contains(query)));
+                jokesIds = await jokeRepository.FindAndMapAsync(jk => jk.Id);
             }
 
-            return jokesIds;
+            int? randomId = null;
+            if (jokesIds != null && jokesIds.Count() != 0)
+            {
+                randomId = GetRandomElement(jokesIds);
+            }
+
+            return randomId;
+        }
+
+        public async Task<ICollection<JokeDTO>> GetJokesBySearch(string query)
+        {
+            query = query?.Trim();
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                var categoryRepository = uow.GetRepository<ICategoryRepository>();
+                ICollection<int> jokesIds = null;
+                ICollection<JokeDTO> returnJokesDtos = new List<JokeDTO>();
+
+                if (string.IsNullOrWhiteSpace(query) || query.Length < 3 || query.Length > 120)
+                {
+                    throw new ArgumentException("search.query: size must be between 3 and 120");
+                }
+                else
+                {
+                    jokesIds = await jokeRepository.FindAndMapAsync(j => j.Id, j => j.Value.Contains(query));
+                }
+
+                if (jokesIds != null && jokesIds.Count() != 0)
+                {
+                    foreach (int id in jokesIds)
+                    {
+                        var jokeDto = await jokeRepository.GetJokeDtoByIdWithCategoriesAsync(id);
+                        returnJokesDtos.Add(jokeDto);
+                    }
+                }
+
+                return returnJokesDtos;
+            }
+        }
+
+        public async Task<ICollection<string>> GetAllCategoriesAsync()
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var categoryRepository = uow.GetRepository<ICategoryRepository>();
+
+                return await categoryRepository.FindAndMapAsync(ct => ct.Title, null, null, null);
+            }
         }
 
         private static int RandomNumber(int number)
         {
-            lock (syncLock)
-            {
-                return random.Next(number);
-            }
+            return random.Next(number);
         }
 
-        private T GetRundomeElement<T>(IEnumerable<T> collection)
+        private T GetRandomElement<T>(IEnumerable<T> collection)
         {
             return collection.ElementAt(RandomNumber(collection.Count()));
         }
