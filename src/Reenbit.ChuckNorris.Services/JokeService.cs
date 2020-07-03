@@ -84,7 +84,6 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var categoryRepository = uow.GetRepository<ICategoryRepository>();
                 ICollection<int> jokesIds = null;
                 ICollection<JokeDTO> returnJokesDtos = new List<JokeDTO>();
 

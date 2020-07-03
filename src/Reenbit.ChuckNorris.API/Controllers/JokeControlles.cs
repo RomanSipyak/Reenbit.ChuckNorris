@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Routing;
 using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Services.Abstraction;
-using Reenbit.ChuckNorris.Services.Helpers.ControllerBinders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
