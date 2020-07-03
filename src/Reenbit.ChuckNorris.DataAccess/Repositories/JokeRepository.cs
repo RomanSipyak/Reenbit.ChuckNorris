@@ -30,6 +30,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             {
                 JokeDtoForReturn.Categories = categoriesForJoke.Select(c => c.Title).ToList();
             }
+
             return JokeDtoForReturn;
         }
     }
