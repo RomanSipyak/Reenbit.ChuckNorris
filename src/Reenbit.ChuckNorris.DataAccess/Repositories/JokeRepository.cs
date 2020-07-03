@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
+using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,12 +14,23 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
 {
     public class JokeRepository : EntityFrameworkCoreRepository<Joke, int>, IJokeRepository
     {
-        public async Task<Joke> GetByIdWithCategoryIncludeAsync(int id)
+        private readonly IMapper mapper;
+
+        public JokeRepository(IMapper mapper)
         {
-            return await this.DBSet.Where(jk => jk.Id == id)
-                              .Include(jk => jk.JokeCategories)
-                              .ThenInclude(jk => jk.Category)
-                              .FirstOrDefaultAsync();
+            this.mapper = mapper;
+        }
+
+        public async Task<JokeDTO> GetJokeDtoByIdWithCategoriesAsync(int id)
+        {
+            var joke = await this.DBSet.Where(j => j.Id == id).FirstOrDefaultAsync();
+            var categoriesForJoke = await this.DbContext.Set<Category>().Where(c => c.JokeCategories.Any(jc => jc.JokeId == id)).ToListAsync();
+            var JokeDtoForReturn = this.mapper.Map<JokeDTO>(joke);
+            if (categoriesForJoke != null)
+            {
+                JokeDtoForReturn.Categories = categoriesForJoke.Select(c => c.Title).ToList();
+            }
+            return JokeDtoForReturn;
         }
     }
 }
