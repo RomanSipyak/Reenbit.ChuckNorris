@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Reenbit.ChuckNorris.Domain.DTOs;
+using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,13 @@ namespace Reenbit.ChuckNorris.API.Controllers
         {
             var categories = await jokeService.GetAllCategoriesAsync();
             return Ok(categories);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateJoke(CreateJokeDTO createJokeDTO)
+        {
+            var joke = await jokeService.CreateNewJokeAsync(createJokeDTO);
+            return CreatedAtAction(nameof(CreateJoke), joke);
         }
     }
 }

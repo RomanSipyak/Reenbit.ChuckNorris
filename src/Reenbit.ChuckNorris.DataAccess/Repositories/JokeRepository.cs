@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
-using Reenbit.ChuckNorris.Domain.DTOs;
+using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
 using System;
 using System.Collections.Generic;

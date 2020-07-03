@@ -14,6 +14,6 @@ namespace Reenbit.ChuckNorris.Domain.Entities
 
         public string IconUrl { get; set; }
 
-        public ICollection<JokeCategory> JokeCategories { get; set; }
+        public ICollection<JokeCategory> JokeCategories { get; set; } = new List<JokeCategory>();
     }
 }

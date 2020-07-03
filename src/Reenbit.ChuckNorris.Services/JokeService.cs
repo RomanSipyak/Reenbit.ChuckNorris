@@ -3,7 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
-using Reenbit.ChuckNorris.Domain.DTOs;
+using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
@@ -107,6 +107,42 @@ namespace Reenbit.ChuckNorris.Services
 
                 return returnJokesDtos;
             }
+        }
+
+        public async Task<JokeDTO> CreateNewJokeAsync(CreateJokeDTO jokeDto)
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                var categoryRepository = uow.GetRepository<ICategoryRepository>();
+                Joke joke = mapper.Map<Joke>(jokeDto);
+                var categories = mapper.Map<ICollection<Category>>(jokeDto.Categories);
+                await AllCategoriesExistAsync(categories, categoryRepository);
+                jokeRepository.Add(joke);
+
+                foreach (var category in categories)
+                {
+                    var categoryForJoke = (await categoryRepository.FindAsync(c => category.Id == c.Id)).FirstOrDefault();
+                    joke.JokeCategories?.Add(new JokeCategory() { Category = categoryForJoke, Joke = joke });
+                }
+
+                await uow.SaveChangesAsync();
+                var returnJoke = mapper.Map<JokeDTO>(joke);
+                returnJoke.Categories = joke.JokeCategories.Select(jc => jc.Category.Title).ToList();
+                return returnJoke;
+            }
+        }
+
+        private async Task<bool> AllCategoriesExistAsync(ICollection<Category> categories, ICategoryRepository categoryRepository)
+        {
+            foreach (var category in categories)
+            {
+                if (!await categoryRepository.AnyAsync(c => category.Id == c.Id))
+                {
+                    throw new ArgumentException($"Category with Id = {category.Id} not found.");
+                }
+            }
+            return true;
         }
 
         public async Task<ICollection<string>> GetAllCategoriesAsync()
