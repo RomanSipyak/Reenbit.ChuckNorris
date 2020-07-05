@@ -30,7 +30,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
             var JokeDto = await jokeService.GetRandomJokeAsync(category);
             if (JokeDto == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             return Ok(JokeDto);
@@ -43,7 +43,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
             var JokeDtos = await jokeService.GetJokesBySearch(query);
             if (JokeDtos == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             return Ok(JokeDtos);

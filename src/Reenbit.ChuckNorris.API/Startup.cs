@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Reenbit.ChuckNorris.API.CustomMiddlewares;
 using Reenbit.ChuckNorris.API.Extentions;
 using Reenbit.ChuckNorris.Domain.DTOsProfiles;
 
@@ -47,6 +48,8 @@ namespace Reenbit.ChuckNorris.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ErrorHandlingExceptionsMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

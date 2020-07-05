@@ -6,6 +6,7 @@ using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
 using Reenbit.ChuckNorris.Services.Abstraction;
+using Reenbit.ChuckNorris.Services.CustomExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace Reenbit.ChuckNorris.Services
             {
                 if (!await categoryRepository.AnyAsync(c => c.Title.Equals(category)))
                 {
-                    throw new ArgumentException($"No jokes for category \"{category}\" found.");
+                    throw new CategoryNotFoundException($"No jokes for category \"{category}\" found.");
                 }
                 else
                 {
@@ -89,7 +90,7 @@ namespace Reenbit.ChuckNorris.Services
 
                 if (string.IsNullOrWhiteSpace(query) || query.Length < 3 || query.Length > 120)
                 {
-                    throw new ArgumentException("search.query: size must be between 3 and 120");
+                    throw new SearchQueryException("search.query: size must be between 3 and 120");
                 }
                 else
                 {
@@ -139,7 +140,7 @@ namespace Reenbit.ChuckNorris.Services
             {
                 if (!await categoryRepository.AnyAsync(c => category.Id == c.Id))
                 {
-                    throw new ArgumentException($"Category with Id = {category.Id} not found.");
+                    throw new CategoryNotFoundException($"Category with Id = {category.Id} not found.");
                 }
             }
             return true;
