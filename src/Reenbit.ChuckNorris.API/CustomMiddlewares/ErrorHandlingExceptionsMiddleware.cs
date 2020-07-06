@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Reenbit.ChuckNorris.Services.CustomExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +33,7 @@ namespace Reenbit.ChuckNorris.API.CustomMiddlewares
         {
             var code = HttpStatusCode.InternalServerError;
 
-            if (excption is CategoryNotFoundException || excption is SearchQueryException)
+            if (excption is ArgumentException)
             {
                 code = HttpStatusCode.BadRequest;
             }
