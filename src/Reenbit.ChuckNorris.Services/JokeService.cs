@@ -23,6 +23,10 @@ namespace Reenbit.ChuckNorris.Services
 
         private static readonly Random random = new Random();
 
+        private const int MaxQueryLength = 120;
+
+        private const int MinQueryLength = 3;
+
         public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
@@ -80,7 +84,7 @@ namespace Reenbit.ChuckNorris.Services
         public async Task<ICollection<JokeDTO>> SearchJokesAsync(string query)
         {
             query = query?.Trim();
-            if (string.IsNullOrWhiteSpace(query) || query.Length < 3 || query.Length > 120)
+            if (string.IsNullOrWhiteSpace(query) || query.Length < MinQueryLength || query.Length > MaxQueryLength)
             {
                 throw new ArgumentException("search.query: size must be between 3 and 120");
             }
