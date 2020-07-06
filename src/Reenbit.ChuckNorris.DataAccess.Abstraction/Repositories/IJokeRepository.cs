@@ -10,6 +10,5 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 {
     public interface IJokeRepository : IRepository<Joke, int>
     {
-        public Task<JokeDTO> GetJokeDtoByIdWithCategoriesAsync(int id);
     }
 }
