@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Reenbit.ChuckNorris.Domain.DTOs.CategoryDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
 using System;
@@ -14,7 +13,6 @@ namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
         {
             CreateMap<Joke, JokeDTO>().ReverseMap();
             CreateMap<CreateJokeDTO, Joke>();
-            CreateMap<CategoryDTO, Category>();
         }
     }
 }
