@@ -34,23 +34,31 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var categoryRepository = uow.GetRepository<ICategoryRepository>();
-                int? jokeId = null;
 
-                jokeId = await GetRandomJokeId(category, jokeRepository, categoryRepository);
+                int? jokeId = await GetRandomJokeId(category, jokeRepository, uow);
 
                 if (jokeId != null)
                 {
-                    var joke = await jokeRepository.GetJokeDtoByIdWithCategoriesAsync(jokeId.Value);
-                    return joke;
+                    var joke = await jokeRepository.FindAndMapAsync(j =>
+                                                   new JokeDTO
+                                                   {
+                                                       Id = j.Id,
+                                                       IconUrl = j.IconUrl,
+                                                       Url = j.Url,
+                                                       Value = j.Value,
+                                                       Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList()
+                                                   },
+                                                   j => j.Id == jokeId.Value);
+                    return joke.FirstOrDefault();
                 }
 
                 return null;
             }
         }
 
-        private async Task<int?> GetRandomJokeId(string category, IJokeRepository jokeRepository, ICategoryRepository categoryRepository)
+        private async Task<int?> GetRandomJokeId(string category, IJokeRepository jokeRepository, IUnitOfWork uow)
         {
+            var categoryRepository = uow.GetRepository<ICategoryRepository>();
             ICollection<int> jokesIds = null;
             if (!string.IsNullOrEmpty(category))
             {
@@ -61,7 +69,7 @@ namespace Reenbit.ChuckNorris.Services
                 else
                 {
                     jokesIds = await jokeRepository.FindAndMapAsync(j => j.Id,
-                                                            j => j.JokeCategories.Any(jc => jc.Category.Title.Equals(category)));
+                                                                    j => j.JokeCategories.Any(jc => jc.Category.Title.Equals(category)));
                 }
             }
             else
@@ -78,33 +86,27 @@ namespace Reenbit.ChuckNorris.Services
             return randomId;
         }
 
-        public async Task<ICollection<JokeDTO>> GetJokesBySearch(string query)
+        public async Task<ICollection<JokeDTO>> SearchJokesAsync(string query)
         {
             query = query?.Trim();
+            if (string.IsNullOrWhiteSpace(query) || query.Length < 3 || query.Length > 120)
+            {
+                throw new ArgumentException("search.query: size must be between 3 and 120");
+            }
+
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                ICollection<int> jokesIds = null;
-                ICollection<JokeDTO> returnJokesDtos = new List<JokeDTO>();
-
-                if (string.IsNullOrWhiteSpace(query) || query.Length < 3 || query.Length > 120)
-                {
-                    throw new ArgumentException("search.query: size must be between 3 and 120");
-                }
-                else
-                {
-                    jokesIds = await jokeRepository.FindAndMapAsync(j => j.Id, j => j.Value.Contains(query));
-                }
-
-                if (jokesIds != null && jokesIds.Count() != 0)
-                {
-                    foreach (int id in jokesIds)
-                    {
-                        var jokeDto = await jokeRepository.GetJokeDtoByIdWithCategoriesAsync(id);
-                        returnJokesDtos.Add(jokeDto);
-                    }
-                }
-
+                ICollection<JokeDTO> returnJokesDtos = await jokeRepository.FindAndMapAsync(j =>
+                                                       new JokeDTO
+                                                       {
+                                                           Id = j.Id,
+                                                           IconUrl = j.IconUrl,
+                                                           Url = j.Url,
+                                                           Value = j.Value,
+                                                           Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList()
+                                                       },
+                                                       j => j.Value.Contains(query));
                 return returnJokesDtos;
             }
         }
@@ -116,10 +118,8 @@ namespace Reenbit.ChuckNorris.Services
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
                 Joke joke = mapper.Map<Joke>(jokeDto);
-                var categories = mapper.Map<ICollection<Category>>(jokeDto.Categories);
-                await AllCategoriesExistAsync(categories, categoryRepository);
+                var categories = categoryRepository.Find(c => jokeDto.Categories.Any(cd => cd == c.Id));
                 jokeRepository.Add(joke);
-
                 foreach (var category in categories)
                 {
                     var categoryForJoke = (await categoryRepository.FindAsync(c => category.Id == c.Id)).FirstOrDefault();
@@ -133,36 +133,19 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        private async Task<bool> AllCategoriesExistAsync(ICollection<Category> categories, ICategoryRepository categoryRepository)
-        {
-            foreach (var category in categories)
-            {
-                if (!await categoryRepository.AnyAsync(c => category.Id == c.Id))
-                {
-                    throw new ArgumentException($"Category with Id = {category.Id} not found.");
-                }
-            }
-            return true;
-        }
-
         public async Task<ICollection<string>> GetAllCategoriesAsync()
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
 
-                return await categoryRepository.FindAndMapAsync(c => c.Title, null, null, null);
+                return await categoryRepository.FindAndMapAsync(c => c.Title);
             }
-        }
-
-        private static int RandomNumber(int number)
-        {
-            return random.Next(number);
         }
 
         private T GetRandomElement<T>(IEnumerable<T> collection)
         {
-            return collection.ElementAt(RandomNumber(collection.Count()));
+            return collection.ElementAt(random.Next(collection.Count()));
         }
     }
 }
