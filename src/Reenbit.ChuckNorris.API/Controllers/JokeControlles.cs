@@ -27,26 +27,26 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Route("random")]
         public async Task<IActionResult> GetRandomJoke([FromQuery] string category)
         {
-            var JokeDto = await jokeService.GetRandomJokeAsync(category);
-            if (JokeDto == null)
+            var jokeDto = await jokeService.GetRandomJokeAsync(category);
+            if (jokeDto == null)
             {
                 return NotFound();
             }
 
-            return Ok(JokeDto);
+            return Ok(jokeDto);
         }
 
         [HttpGet]
         [Route("search")]
         public async Task<IActionResult> GetJokesBySearch([FromQuery] string query)
         {
-            var JokeDtos = await jokeService.GetJokesBySearch(query);
-            if (JokeDtos == null)
+            var jokeDtos = await jokeService.SearchJokesAsync(query);
+            if (jokeDtos == null || jokeDtos.Count() == 0)
             {
                 return NotFound();
             }
 
-            return Ok(JokeDtos);
+            return Ok(jokeDtos);
         }
 
         [HttpGet]
