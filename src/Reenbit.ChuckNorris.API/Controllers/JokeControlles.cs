@@ -41,7 +41,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         public async Task<IActionResult> GetJokesBySearch([FromQuery] string query)
         {
             var jokeDtos = await jokeService.SearchJokesAsync(query);
-            if (jokeDtos == null || jokeDtos.Count() == 0)
+            if (jokeDtos.Count() == 0)
             {
                 return NotFound();
             }

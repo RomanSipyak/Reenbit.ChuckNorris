@@ -106,12 +106,7 @@ namespace Reenbit.ChuckNorris.Services
                 Joke joke = mapper.Map<Joke>(jokeDto);
                 var categories = categoryRepository.Find(c => jokeDto.Categories.Any(cd => cd == c.Id));
                 jokeRepository.Add(joke);
-                foreach (var category in categories)
-                {
-                    var categoryForJoke = (await categoryRepository.FindAsync(c => category.Id == c.Id)).FirstOrDefault();
-                    joke.JokeCategories?.Add(new JokeCategory() { Category = categoryForJoke, Joke = joke });
-                }
-
+                joke.JokeCategories = categories.Select(c => new JokeCategory() { Category = c, Joke = joke }).ToList();
                 await uow.SaveChangesAsync();
                 var returnJoke = mapper.Map<JokeDTO>(joke);
                 returnJoke.Categories = joke.JokeCategories.Select(jc => jc.Category.Title).ToList();
