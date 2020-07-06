@@ -39,16 +39,7 @@ namespace Reenbit.ChuckNorris.Services
 
                 if (jokeId != null)
                 {
-                    var joke = await jokeRepository.FindAndMapAsync(j =>
-                                                   new JokeDTO
-                                                   {
-                                                       Id = j.Id,
-                                                       IconUrl = j.IconUrl,
-                                                       Url = j.Url,
-                                                       Value = j.Value,
-                                                       Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList()
-                                                   },
-                                                   j => j.Id == jokeId.Value);
+                    var joke = await jokeRepository.FindAndMapAsync(JokeDtoSelector(), j => j.Id == jokeId.Value);
                     return joke.FirstOrDefault();
                 }
 
@@ -97,16 +88,7 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                ICollection<JokeDTO> returnJokesDtos = await jokeRepository.FindAndMapAsync(j =>
-                                                       new JokeDTO
-                                                       {
-                                                           Id = j.Id,
-                                                           IconUrl = j.IconUrl,
-                                                           Url = j.Url,
-                                                           Value = j.Value,
-                                                           Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList()
-                                                       },
-                                                       j => j.Value.Contains(query));
+                ICollection<JokeDTO> returnJokesDtos = await jokeRepository.FindAndMapAsync(JokeDtoSelector(), j => j.Value.Contains(query));
                 return returnJokesDtos;
             }
         }
@@ -141,6 +123,18 @@ namespace Reenbit.ChuckNorris.Services
 
                 return await categoryRepository.FindAndMapAsync(c => c.Title);
             }
+        }
+
+        private Expression<Func<Joke, JokeDTO>> JokeDtoSelector()
+        {
+            return j => new JokeDTO
+            {
+                Id = j.Id,
+                IconUrl = j.IconUrl,
+                Url = j.Url,
+                Value = j.Value,
+                Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList()
+            };
         }
 
         private T GetRandomElement<T>(IEnumerable<T> collection)
