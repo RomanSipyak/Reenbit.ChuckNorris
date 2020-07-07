@@ -42,7 +42,8 @@ namespace Reenbit.ChuckNorris.API
             services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfileForDTOs)));
 
             var configurationManager = GetConfigurationManager(services);
-            services.AddDbContext<ReenbitChuckNorrisDbContext>(options => options.UseSqlServer(configurationManager.DatabaseConnectionString));
+            services.AddDbContext<ReenbitChuckNorrisDbContext>(options =>
+                                                               options.UseSqlServer(configurationManager.DatabaseConnectionString));
 
             services.AddIdentity<User, Role>(options =>
             options.Password = new PasswordOptions
@@ -53,7 +54,7 @@ namespace Reenbit.ChuckNorris.API
                 RequireUppercase = false,
                 RequireNonAlphanumeric = false
             }).AddEntityFrameworkStores<ReenbitChuckNorrisDbContext>()
-              .AddDefaultTokenProviders();*/
+              .AddDefaultTokenProviders();
 
             services.AddSwaggerGen(c =>
             {
@@ -85,8 +86,8 @@ namespace Reenbit.ChuckNorris.API
             });
 
             app.UseCors("CorsPolicy");
-
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
