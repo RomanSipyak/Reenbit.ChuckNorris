@@ -1,7 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Reenbit.ChuckNorris.DataAccess.Abstraction\Reenbit.ChuckNorris.DataAccess.Abstraction.csproj" />
+    <ProjectReference Include="..\Reenbit.ChuckNorris.Domain\Reenbit.ChuckNorris.Domain.csproj" />
+    <ProjectReference Include="..\Reenbit.ChuckNorris.Services.Abstraction\Reenbit.ChuckNorris.Services.Abstraction.csproj" />
+  </ItemGroup>
 
 </Project>

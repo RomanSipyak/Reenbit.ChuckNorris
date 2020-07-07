@@ -5,13 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Reenbit.ChuckNorris.DataAccess.Abstraction\Reenbit.ChuckNorris.DataAccess.Abstraction.csproj" />
     <ProjectReference Include="..\Reenbit.ChuckNorris.DataAccess\Reenbit.ChuckNorris.DataAccess.csproj" />
     <ProjectReference Include="..\Reenbit.ChuckNorris.Infrastructure\Reenbit.ChuckNorris.Infrastructure.csproj" />
+    <ProjectReference Include="..\Reenbit.ChuckNorris.Services.Abstraction\Reenbit.ChuckNorris.Services.Abstraction.csproj" />
+    <ProjectReference Include="..\Reenbit.ChuckNorris.Services\Reenbit.ChuckNorris.Services.csproj" />
   </ItemGroup>
 
 

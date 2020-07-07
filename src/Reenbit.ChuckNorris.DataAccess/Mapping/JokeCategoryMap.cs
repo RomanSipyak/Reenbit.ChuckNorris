@@ -13,10 +13,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
         {
             builder.ToTable("JokeCategory");
 
-            builder.HasKey(jct => new { jct.JokeId, jct.CategoryId});
+            builder.HasKey(jc => new { jc.JokeId, jc.CategoryId });
 
-            builder.Property(jct => jct.JokeId).IsRequired();
-            builder.Property(jct => jct.CategoryId).IsRequired();
+            builder.Property(jc => jc.JokeId).IsRequired();
+
+            builder.Property(jc => jc.CategoryId).IsRequired();
         }
     }
 }
