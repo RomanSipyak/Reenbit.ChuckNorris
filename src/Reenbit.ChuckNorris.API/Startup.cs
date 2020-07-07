@@ -31,6 +31,9 @@ namespace Reenbit.ChuckNorris.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.RegisterDependencies();
+            services.AddCors(options => options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
+                                                                                          .AllowAnyMethod()
+                                                                                          .AllowAnyHeader()));
             services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfileForDTOs)));
 
             services.AddSwaggerGen(c =>
@@ -57,6 +60,8 @@ namespace Reenbit.ChuckNorris.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "CHUCKNORRIS API");
             });
+
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 
