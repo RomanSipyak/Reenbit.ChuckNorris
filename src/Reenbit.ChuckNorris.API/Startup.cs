@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +19,7 @@ using Reenbit.ChuckNorris.API.Extentions;
 using Reenbit.ChuckNorris.DataAccess;
 using Reenbit.ChuckNorris.Domain.DTOsProfiles;
 using Reenbit.ChuckNorris.Domain.Entities;
+using Reenbit.ChuckNorris.Infrastructure;
 
 namespace Reenbit.ChuckNorris.API
 {
@@ -38,7 +40,11 @@ namespace Reenbit.ChuckNorris.API
                                                                                           .AllowAnyMethod()
                                                                                           .AllowAnyHeader()));
             services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfileForDTOs)));
-           /* services.AddIdentity<User, Role>(options =>
+
+            var configurationManager = GetConfigurationManager(services);
+            services.AddDbContext<ReenbitChuckNorrisDbContext>(options => options.UseSqlServer(configurationManager.DatabaseConnectionString));
+
+            services.AddIdentity<User, Role>(options =>
             options.Password = new PasswordOptions
             {
                 RequireDigit = false,
@@ -86,6 +92,13 @@ namespace Reenbit.ChuckNorris.API
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private IConfigurationManager GetConfigurationManager(IServiceCollection services)
+        {
+            var serviceProvider = services.BuildServiceProvider();
+            IConfigurationManager config = serviceProvider.GetService<IConfigurationManager>();
+            return config;
         }
     }
 }

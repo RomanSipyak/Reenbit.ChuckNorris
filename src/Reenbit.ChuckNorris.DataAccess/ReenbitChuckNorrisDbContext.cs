@@ -10,8 +10,8 @@ using System.Text;
 namespace Reenbit.ChuckNorris.DataAccess
 {
     public class ReenbitChuckNorrisDbContext : IdentityDbContext<User, Role, int,
-                                                          IdentityUserClaim<int>, UserRole,
-                                                          IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
+                                                                 IdentityUserClaim<int>, UserRole, IdentityUserLogin<int>,
+                                                                 IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public ReenbitChuckNorrisDbContext(DbContextOptions<ReenbitChuckNorrisDbContext> options) : base(options)
         {
