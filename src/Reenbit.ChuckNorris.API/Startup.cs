@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Reenbit.ChuckNorris.API.CustomMiddlewares;
 using Reenbit.ChuckNorris.API.Extentions;
+using Reenbit.ChuckNorris.DataAccess;
 using Reenbit.ChuckNorris.Domain.DTOsProfiles;
+using Reenbit.ChuckNorris.Domain.Entities;
 
 namespace Reenbit.ChuckNorris.API
 {
@@ -35,6 +38,16 @@ namespace Reenbit.ChuckNorris.API
                                                                                           .AllowAnyMethod()
                                                                                           .AllowAnyHeader()));
             services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfileForDTOs)));
+           /* services.AddIdentity<User, Role>(options =>
+            options.Password = new PasswordOptions
+            {
+                RequireDigit = false,
+                RequiredLength = 6,
+                RequireLowercase = false,
+                RequireUppercase = false,
+                RequireNonAlphanumeric = false
+            }).AddEntityFrameworkStores<ReenbitChuckNorrisDbContext>()
+              .AddDefaultTokenProviders();*/
 
             services.AddSwaggerGen(c =>
             {

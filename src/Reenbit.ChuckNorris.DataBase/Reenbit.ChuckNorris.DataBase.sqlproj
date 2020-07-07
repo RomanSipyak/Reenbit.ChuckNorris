@@ -61,5 +61,16 @@
     <Build Include="Jokes.sql" />
     <Build Include="Categories.sql" />
     <Build Include="JokeCategory.sql" />
+    <Build Include="AspNetUsers.sql" />
+    <Build Include="AspNetUserRoles.sql" />
+    <Build Include="AspNetUserLogins.sql" />
+    <Build Include="AspNetUserClaims.sql" />
+    <Build Include="AspNetRoles.sql" />
+    <Build Include="AspNetRoleClaims.sql" />
+    <Build Include="AspNetUserTokens.sql" />
+    <Build Include="UserJoke.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Reenbit.ChuckNorris.DataBase.refactorlog" />
   </ItemGroup>
 </Project>
