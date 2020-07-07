@@ -73,6 +73,10 @@ namespace Reenbit.ChuckNorris.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseMiddleware<ErrorHandlingExceptionsMiddleware>();
+            }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -83,10 +87,8 @@ namespace Reenbit.ChuckNorris.API
             app.UseCors("CorsPolicy");
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseMiddleware<ErrorHandlingExceptionsMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
