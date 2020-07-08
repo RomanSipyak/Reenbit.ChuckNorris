@@ -48,16 +48,7 @@ namespace Reenbit.ChuckNorris.API
             services.AddDbContext<ReenbitChuckNorrisDbContext>(options =>
                                                                options.UseSqlServer(configurationManager.DatabaseConnectionString));
 
-            services.AddIdentity<User, Role>(options =>
-            options.Password = new PasswordOptions
-            {
-                RequireDigit = false,
-                RequiredLength = 6,
-                RequireLowercase = false,
-                RequireUppercase = false,
-                RequireNonAlphanumeric = false
-            }).AddEntityFrameworkStores<ReenbitChuckNorrisDbContext>()
-              .AddDefaultTokenProviders();
+            services.AddIdetityConfig();
 
             services.AddJwtBearerConfig();
 

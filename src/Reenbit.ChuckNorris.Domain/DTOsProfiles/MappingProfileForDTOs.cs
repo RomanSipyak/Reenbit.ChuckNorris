@@ -15,7 +15,6 @@ namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
         {
             CreateMap<Joke, JokeDto>().ReverseMap();
             CreateMap<CreateJokeDto, Joke>();
-            CreateMap<UserRegisterDto, User>();
             CreateMap<SignInUserDto, UserDto>().ForMember(desc => desc.Email, opt => opt.MapFrom(src => src.User.Email))
                                                .ForMember(desc => desc.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
                                                .ForMember(desc => desc.LastName, opt => opt.MapFrom(src => src.User.LastName))

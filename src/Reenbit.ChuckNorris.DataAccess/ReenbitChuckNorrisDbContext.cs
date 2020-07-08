@@ -25,7 +25,6 @@ namespace Reenbit.ChuckNorris.DataAccess
             modelBuilder.ApplyConfiguration(new RoleMap());
             modelBuilder.ApplyConfiguration(new CategoryMap());
             modelBuilder.ApplyConfiguration(new JokeMap());
-            modelBuilder.ApplyConfiguration(new UserJokeMap());
             modelBuilder.ApplyConfiguration(new JokeCategoryMap());
         }
     }
