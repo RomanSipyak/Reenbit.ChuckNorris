@@ -74,12 +74,7 @@ namespace Reenbit.ChuckNorris.Services
 
             var newUser = this.mapper.Map<User>(userRegisterDto);
             var createdUser = await this.userManager.CreateAsync(newUser, userRegisterDto.Password);
-            if (createdUser.Succeeded)
-            {
-                return true;
-            }
-
-            return false;
+            return createdUser.Succeeded;
         }
     }
 }
