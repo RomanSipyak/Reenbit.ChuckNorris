@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Mapping
 {
-    public class RoleMap : IEntityTypeConfiguration<Role>
+    class RoleMap : IEntityTypeConfiguration<Role>
     {
         public void Configure(EntityTypeBuilder<Role> builder)
         {

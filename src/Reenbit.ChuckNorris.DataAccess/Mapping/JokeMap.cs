@@ -22,6 +22,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
             builder.Property(j => j.Value)
                    .IsRequired()
                    .HasMaxLength(2000);
+
+            builder.HasMany(j => j.UserFavorites)
+                   .WithOne(uf => uf.Joke)
+                   .HasForeignKey(uf => uf.JokeId)
+                   .IsRequired();
         }
     }
 }

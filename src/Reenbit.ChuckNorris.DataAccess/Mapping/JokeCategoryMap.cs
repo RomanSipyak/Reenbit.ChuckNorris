@@ -11,7 +11,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
     {
         public void Configure(EntityTypeBuilder<JokeCategory> builder)
         {
-            builder.ToTable("JokeCategory");
+            builder.ToTable("JokeCategories");
 
             builder.HasKey(jc => new { jc.JokeId, jc.CategoryId });
 

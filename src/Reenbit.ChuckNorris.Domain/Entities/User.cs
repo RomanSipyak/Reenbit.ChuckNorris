@@ -18,5 +18,7 @@ namespace Reenbit.ChuckNorris.Domain.Entities
         public virtual ICollection<IdentityUserToken<int>> Tokens { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; }
+
+        public virtual ICollection<UserFavorite> UserFavorites { get; set; } = new List<UserFavorite>();
     }
 }

@@ -30,6 +30,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
                    .WithOne()
                    .HasForeignKey(ur => ur.UserId)
                    .IsRequired();
+
+            builder.HasMany(u => u.UserFavorites)
+                   .WithOne(uf => uf.User)
+                   .HasForeignKey(uf => uf.UserId)
+                   .IsRequired();
         }
     }
 }

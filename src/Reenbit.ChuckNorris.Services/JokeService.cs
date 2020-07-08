@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
+using Microsoft.AspNetCore.Identity;
 using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,16 +23,19 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly IMapper mapper;
 
+        private readonly UserManager<User> userManager;
+
         private static readonly Random random = new Random();
 
         private const int MaxQueryLength = 120;
 
         private const int MinQueryLength = 3;
 
-        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper)
+        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.mapper = mapper;
+            this.userManager = userManager;
         }
 
         public async Task<JokeDto> GetRandomJokeAsync(string category)
@@ -121,6 +126,53 @@ namespace Reenbit.ChuckNorris.Services
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
 
                 return await categoryRepository.FindAndMapAsync(c => c.Title);
+            }
+        }
+
+        public async Task<bool> AddJokeToFavoriteAsync(int favoriteJokeId, ClaimsPrincipal userClaimsPrincipal)
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                var joke = jokeRepository.Find(j => j.Id == favoriteJokeId, null, new List<Expression<Func<Joke, object>>>() { j => j.UserFavorites }).FirstOrDefault();
+                if (joke == null)
+                {
+                    throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
+                }
+
+                var user = await this.userManager.GetUserAsync(userClaimsPrincipal);
+                if (joke.UserFavorites.Any(uf => uf.UserId == user.Id))
+                {
+                    throw new ArgumentException($"Joke with Id = {favoriteJokeId} already your favorite");
+                }
+
+                joke.UserFavorites.Add(new UserFavorite { JokeId = favoriteJokeId, UserId = user.Id });
+                var number = await (uow.SaveChangesAsync());
+                return number > 0;
+            }
+        }
+
+        public async Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, ClaimsPrincipal userClaimsPrincipal)
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                var joke = jokeRepository.Find(j => j.Id == favoriteJokeId, null, new List<Expression<Func<Joke, object>>>() { j => j.UserFavorites }).FirstOrDefault();
+                if (joke == null)
+                {
+                    throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
+                }
+
+                var user = await this.userManager.GetUserAsync(userClaimsPrincipal);
+                if (!joke.UserFavorites.Any(uf => uf.UserId == user.Id))
+                {
+                    throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't your favorite");
+                }
+
+                var favoriteJokeForDelete = joke.UserFavorites.Where(uf => uf.UserId == user.Id).FirstOrDefault();
+                joke.UserFavorites.Remove(favoriteJokeForDelete);
+                var number = await (uow.SaveChangesAsync());
+                return number > 0;
             }
         }
 
