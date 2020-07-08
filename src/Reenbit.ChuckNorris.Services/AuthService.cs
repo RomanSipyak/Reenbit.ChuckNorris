@@ -29,7 +29,7 @@ namespace Reenbit.ChuckNorris.Services
             var user = await this.userManager.FindByEmailAsync(signInCredentialsDto.Email);
             if (user != null)
             {
-                var signInResult = await this.signInManager.PasswordSignInAsync(user, signInCredentialsDto.Password, signInCredentialsDto.RememberMe, false);
+                var signInResult = await this.signInManager.PasswordSignInAsync(user, signInCredentialsDto.Password, false, false);
                 if (signInResult.Succeeded)
                 {
                     var roles = await this.userManager.GetRolesAsync(user);
