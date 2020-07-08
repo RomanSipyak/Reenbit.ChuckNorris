@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
@@ -19,11 +18,8 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly UserManager<User> userManager;
 
-        private readonly IMapper mapper;
-
-        public AuthService(SignInManager<User> signInManager, UserManager<User> userManager, IMapper mapper)
+        public AuthService(SignInManager<User> signInManager, UserManager<User> userManager)
         {
-            this.mapper = mapper;
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
@@ -42,6 +38,7 @@ namespace Reenbit.ChuckNorris.Services
                         User = user,
                         Roles = roles.ToList()
                     };
+
                     return userDto;
                 }
             }
@@ -61,19 +58,6 @@ namespace Reenbit.ChuckNorris.Services
             claimsIdentity.AddClaims(signInUserDto.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             return claimsIdentity;
-        }
-
-        public async Task RegisterUserAsync(UserRegisterDto userRegisterDto)
-        {
-            var existingUser = await this.userManager.FindByEmailAsync(userRegisterDto.Email);
-            if (existingUser != null)
-            {
-                return;
-            }
-
-            var newUser = this.mapper.Map<User>(userRegisterDto);
-            var createdUser = await this.userManager.CreateAsync(newUser, userRegisterDto.Password);
-            return;
         }
     }
 }

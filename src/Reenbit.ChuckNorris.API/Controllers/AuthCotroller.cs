@@ -51,14 +51,6 @@ namespace Reenbit.ChuckNorris.API.Controllers
             }
         }
 
-        [HttpPost, AllowAnonymous]
-        [Route("signup")]
-        public async Task<IActionResult> SignUp([FromBody]UserRegisterDto userRegisterDto)
-        {
-            await this.authService.RegisterUserAsync(userRegisterDto);
-            return Ok();
-        }
-
         private string GenerateToken(SignInUserDto user)
         {
             var identity = this.authService.GetIdentity(user);
