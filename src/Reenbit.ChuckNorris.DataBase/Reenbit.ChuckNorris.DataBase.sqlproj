@@ -68,9 +68,5 @@
     <Build Include="AspNetRoles.sql" />
     <Build Include="AspNetRoleClaims.sql" />
     <Build Include="AspNetUserTokens.sql" />
-    <Build Include="UserJoke.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <RefactorLog Include="Reenbit.ChuckNorris.DataBase.refactorlog" />
   </ItemGroup>
 </Project>
