@@ -9,12 +9,12 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 {
     public interface IJokeService
     {
-        Task<JokeDTO> GetRandomJokeAsync(string category);
+        Task<JokeDto> GetRandomJokeAsync(string category);
 
-        Task<ICollection<JokeDTO>> SearchJokesAsync(string query);
+        Task<ICollection<JokeDto>> SearchJokesAsync(string query);
 
         Task<ICollection<string>> GetAllCategoriesAsync();
 
-        Task<JokeDTO> CreateNewJokeAsync(CreateJokeDTO jokeDto);
+        Task<JokeDto> CreateNewJokeAsync(CreateJokeDto jokeDto);
     }
 }

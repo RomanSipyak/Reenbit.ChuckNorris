@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
 {
-    public class CreateJokeDTO
+    public class CreateJokeDto
     {
         [Required]
         public string Value { get; set; }

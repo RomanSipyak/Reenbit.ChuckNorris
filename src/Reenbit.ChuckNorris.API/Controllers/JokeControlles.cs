@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
@@ -58,9 +60,9 @@ namespace Reenbit.ChuckNorris.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateJoke(CreateJokeDTO createJokeDTO)
+        public async Task<IActionResult> CreateJoke(CreateJokeDto createJokeDto)
         {
-            var joke = await jokeService.CreateNewJokeAsync(createJokeDTO);
+            var joke = await jokeService.CreateNewJokeAsync(createJokeDto);
             return CreatedAtAction(nameof(CreateJoke), joke);
         }
     }

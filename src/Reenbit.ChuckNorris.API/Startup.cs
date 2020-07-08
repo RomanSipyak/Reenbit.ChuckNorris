@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +14,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Reenbit.ChuckNorris.API.Authentication;
 using Reenbit.ChuckNorris.API.CustomMiddlewares;
 using Reenbit.ChuckNorris.API.Extentions;
 using Reenbit.ChuckNorris.DataAccess;
@@ -55,6 +58,33 @@ namespace Reenbit.ChuckNorris.API
                 RequireNonAlphanumeric = false
             }).AddEntityFrameworkStores<ReenbitChuckNorrisDbContext>()
               .AddDefaultTokenProviders();
+
+            services.AddAuthentication(
+                options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+
+                        ValidIssuer = AuthOptions.ISSUER,
+
+                        ValidateAudience = true,
+
+                        ValidAudience = AuthOptions.AUDIENCE,
+
+                        ValidateLifetime = true,
+
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+
+                        ValidateIssuerSigningKey = true,
+                    };
+                });
 
             services.AddSwaggerGen(c =>
             {
