@@ -10,6 +10,6 @@ namespace Reenbit.ChuckNorris.Domain.Entities
 
         public string Title { get; set; }
 
-        public ICollection<JokeCategory> JokeCategories { get; set; }
+        public ICollection<JokeCategory> JokeCategories { get; set; } = new List<JokeCategory>();
     }
 }

@@ -33,7 +33,7 @@ namespace Reenbit.ChuckNorris.Services
             this.mapper = mapper;
         }
 
-        public async Task<JokeDTO> GetRandomJokeAsync(string category)
+        public async Task<JokeDto> GetRandomJokeAsync(string category)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -81,7 +81,7 @@ namespace Reenbit.ChuckNorris.Services
             return randomId;
         }
 
-        public async Task<ICollection<JokeDTO>> SearchJokesAsync(string query)
+        public async Task<ICollection<JokeDto>> SearchJokesAsync(string query)
         {
             query = query?.Trim();
             if (string.IsNullOrWhiteSpace(query) || query.Length < MinQueryLength || query.Length > MaxQueryLength)
@@ -92,12 +92,12 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                ICollection<JokeDTO> returnJokesDtos = await jokeRepository.FindAndMapAsync(JokeDtoSelector(), j => j.Value.Contains(query));
+                ICollection<JokeDto> returnJokesDtos = await jokeRepository.FindAndMapAsync(JokeDtoSelector(), j => j.Value.Contains(query));
                 return returnJokesDtos;
             }
         }
 
-        public async Task<JokeDTO> CreateNewJokeAsync(CreateJokeDTO jokeDto)
+        public async Task<JokeDto> CreateNewJokeAsync(CreateJokeDto jokeDto)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -108,7 +108,7 @@ namespace Reenbit.ChuckNorris.Services
                 jokeRepository.Add(joke);
                 joke.JokeCategories = categories.Select(c => new JokeCategory() { Category = c, Joke = joke }).ToList();
                 await uow.SaveChangesAsync();
-                var returnJoke = mapper.Map<JokeDTO>(joke);
+                var returnJoke = mapper.Map<JokeDto>(joke);
                 returnJoke.Categories = joke.JokeCategories.Select(jc => jc.Category.Title).ToList();
                 return returnJoke;
             }
@@ -124,9 +124,9 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        private Expression<Func<Joke, JokeDTO>> JokeDtoSelector()
+        private Expression<Func<Joke, JokeDto>> JokeDtoSelector()
         {
-            return j => new JokeDTO
+            return j => new JokeDto
             {
                 Id = j.Id,
                 IconUrl = j.IconUrl,

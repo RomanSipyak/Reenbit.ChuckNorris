@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Reenbit.ChuckNorris.DataAccess.Abstraction\Reenbit.ChuckNorris.DataAccess.Abstraction.csproj" />
     <ProjectReference Include="..\Reenbit.ChuckNorris.Domain\Reenbit.ChuckNorris.Domain.csproj" />
     <ProjectReference Include="..\Reenbit.ChuckNorris.Services.Abstraction\Reenbit.ChuckNorris.Services.Abstraction.csproj" />

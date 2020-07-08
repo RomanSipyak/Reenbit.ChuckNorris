@@ -4,17 +4,25 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Reenbit.ChuckNorris.API.Authentication;
 using Reenbit.ChuckNorris.API.CustomMiddlewares;
 using Reenbit.ChuckNorris.API.Extentions;
+using Reenbit.ChuckNorris.DataAccess;
 using Reenbit.ChuckNorris.Domain.DTOsProfiles;
+using Reenbit.ChuckNorris.Domain.Entities;
+using Reenbit.ChuckNorris.Infrastructure;
 
 namespace Reenbit.ChuckNorris.API
 {
@@ -36,6 +44,14 @@ namespace Reenbit.ChuckNorris.API
                                                                                           .AllowAnyHeader()));
             services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfileForDTOs)));
 
+            var configurationManager = GetConfigurationManager(services);
+            services.AddDbContext<ReenbitChuckNorrisDbContext>(options =>
+                                                               options.UseSqlServer(configurationManager.DatabaseConnectionString));
+
+            services.AddIdetityConfig();
+
+            services.AddJwtBearerConfig();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CHUCKNORRIS API", Version = "v1" });
@@ -54,6 +70,10 @@ namespace Reenbit.ChuckNorris.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseMiddleware<ErrorHandlingExceptionsMiddleware>();
+            }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -62,17 +82,22 @@ namespace Reenbit.ChuckNorris.API
             });
 
             app.UseCors("CorsPolicy");
-
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseMiddleware<ErrorHandlingExceptionsMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private IConfigurationManager GetConfigurationManager(IServiceCollection services)
+        {
+            var serviceProvider = services.BuildServiceProvider();
+            IConfigurationManager config = serviceProvider.GetService<IConfigurationManager>();
+            return config;
         }
     }
 }
