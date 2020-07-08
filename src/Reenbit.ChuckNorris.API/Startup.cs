@@ -59,32 +59,7 @@ namespace Reenbit.ChuckNorris.API
             }).AddEntityFrameworkStores<ReenbitChuckNorrisDbContext>()
               .AddDefaultTokenProviders();
 
-            services.AddAuthentication(
-                options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-
-                        ValidIssuer = AuthOptions.ISSUER,
-
-                        ValidateAudience = true,
-
-                        ValidAudience = AuthOptions.AUDIENCE,
-
-                        ValidateLifetime = true,
-
-                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-
-                        ValidateIssuerSigningKey = true,
-                    };
-                });
+            services.AddJwtBearerConfig();
 
             services.AddSwaggerGen(c =>
             {
