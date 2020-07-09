@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.Entities
 {
-    public class UserFavorite
+    public class UserFavorite : BaseEntity
     {
         public int UserId { get; set; }
 
