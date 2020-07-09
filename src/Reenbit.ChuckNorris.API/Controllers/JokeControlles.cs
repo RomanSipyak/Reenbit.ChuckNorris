@@ -72,7 +72,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> AddJokeToFavorite([FromRoute] int favoriteJokeId)
         {
-            return Ok(await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId));
+            return CreatedAtAction(nameof(AddJokeToFavorite), await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId));
         }
 
         [HttpDelete]
