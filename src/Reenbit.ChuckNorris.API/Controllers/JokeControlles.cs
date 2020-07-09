@@ -70,10 +70,10 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [HttpPost]
         [Route("favorite/{favoriteJokeId}")]
         [Authorize]
-        public async Task<IActionResult> AddJokeToFavorite([FromRoute] int favoriteJokeId) 
+        public async Task<IActionResult> AddJokeToFavorite([FromRoute] int favoriteJokeId)
         {
-            ClaimsPrincipal userClaimPrincipal = GetCurrentUserId();
-            if(await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, userClaimPrincipal))
+            string userId = GetCurrentUserId();
+            if (await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, userId))
             {
                 return Ok("We added your joke to favorite");
             }
@@ -88,8 +88,8 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
         {
-            ClaimsPrincipal userClaimPrincipal = GetCurrentUserId();
-            if (await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, userClaimPrincipal))
+            string userId = GetCurrentUserId();
+            if (await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, userId))
             {
                 return Ok("We deleted your joke from favorite");
             }
@@ -104,20 +104,15 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllFavoriteJokesForUser()
         {
-            ClaimsPrincipal userClaimPrincipal = GetCurrentUserId();
-            var userFavoriteJokes = await this.jokeService.GetFavoriteJokesForUser(userClaimPrincipal);
-            if (userFavoriteJokes.Count() == 0)
-            {
-                return NotFound();
-            }
-
+            string userId = GetCurrentUserId();
+            var userFavoriteJokes = await this.jokeService.GetFavoriteJokesForUser(userId);
             return Ok(userFavoriteJokes);
         }
 
-        private ClaimsPrincipal GetCurrentUserId()
+        private string GetCurrentUserId()
         {
-            var userClaimPrincipal = this.User;
-            return userClaimPrincipal;
+            var userId = this.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            return userId;
         }
     }
 }

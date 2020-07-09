@@ -129,7 +129,7 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<bool> AddJokeToFavoriteAsync(int favoriteJokeId, ClaimsPrincipal userClaimsPrincipal)
+        public async Task<bool> AddJokeToFavoriteAsync(int favoriteJokeId, string userId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -141,7 +141,7 @@ namespace Reenbit.ChuckNorris.Services
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
                 }
 
-                var user = await this.userManager.GetUserAsync(userClaimsPrincipal);
+                var user = await this.userManager.FindByIdAsync(userId);
                 if (joke.UserFavorites.Any(uf => uf.UserId == user.Id))
                 {
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} already your favorite");
@@ -153,7 +153,7 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, ClaimsPrincipal userClaimsPrincipal)
+        public async Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, string userId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -165,12 +165,7 @@ namespace Reenbit.ChuckNorris.Services
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
                 }
 
-                var user = await this.userManager.GetUserAsync(userClaimsPrincipal);
-                if (!joke.UserFavorites.Any(uf => uf.UserId == user.Id))
-                {
-                    throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't your favorite");
-                }
-
+                var user = await this.userManager.FindByIdAsync(userId);
                 var favoriteJokeForDelete = joke.UserFavorites.Where(uf => uf.UserId == user.Id).FirstOrDefault();
                 joke.UserFavorites.Remove(favoriteJokeForDelete);
                 var number = await (uow.SaveChangesAsync());
@@ -178,9 +173,9 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<ICollection<JokeDto>> GetFavoriteJokesForUser(ClaimsPrincipal userClaimsPrincipal)
+        public async Task<ICollection<JokeDto>> GetFavoriteJokesForUser(string userid)
         {
-            var user = await this.userManager.GetUserAsync(userClaimsPrincipal);
+            var user = await this.userManager.FindByIdAsync(userid);
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
