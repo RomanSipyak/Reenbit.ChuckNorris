@@ -31,11 +31,13 @@ namespace Reenbit.ChuckNorris.DataAccess
 
         public int SaveChanges()
         {
+            CreatedAtAndUpdatedAtUpdate();
             return dbContext.SaveChanges();
         }
 
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
+            CreatedAtAndUpdatedAtUpdate();
             return this.dbContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -57,6 +59,23 @@ namespace Reenbit.ChuckNorris.DataAccess
         {
             this.dbContext.Dispose();
             this.repositories.Clear();
+        }
+
+        private void CreatedAtAndUpdatedAtUpdate()
+        {
+            var entries = dbContext.ChangeTracker.Entries().Where(e => e.Entity is TrackedEntity && (
+                                                                       e.State == EntityState.Added
+                                                                       || e.State == EntityState.Modified));
+
+            foreach (var entityEntry in entries)
+            {
+                ((TrackedEntity)entityEntry.Entity).UpdatedAt = DateTime.UtcNow;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    ((TrackedEntity)entityEntry.Entity).CreatedAt = DateTime.UtcNow;
+                }
+            }
         }
     }
 }

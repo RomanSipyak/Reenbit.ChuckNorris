@@ -15,6 +15,10 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
 
         public string Url { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime UpdatedAt { get; set; }
+
         [JsonProperty("icon_url")]
         public string IconUrl { get; set; }
 

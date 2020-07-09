@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.Entities
 {
-    public class Joke
+    public class Joke : TrackedEntity
     {
         public int Id { get; set; }
 

@@ -44,6 +44,8 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 IconUrl = j.IconUrl,
                 Url = j.Url,
                 Value = j.Value,
+                CreatedAt = j.CreatedAt,
+                UpdatedAt = j.UpdatedAt,
                 Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList()
             };
         }
@@ -56,6 +58,8 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 IconUrl = uf.Joke.IconUrl,
                 Url = uf.Joke.Url,
                 Value = uf.Joke.Value,
+                CreatedAt = uf.Joke.CreatedAt,
+                UpdatedAt = uf.Joke.UpdatedAt,
                 Categories = uf.Joke.JokeCategories.Select(jc => jc.Category.Title).ToList()
             };
         }
