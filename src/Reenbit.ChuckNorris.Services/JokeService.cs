@@ -134,7 +134,8 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var joke = jokeRepository.Find(j => j.Id == favoriteJokeId, null, new List<Expression<Func<Joke, object>>>() { j => j.UserFavorites }).FirstOrDefault();
+                var joke = jokeRepository.Find(j => j.Id == favoriteJokeId, null,
+                                               new List<Expression<Func<Joke, object>>>() { j => j.UserFavorites }).FirstOrDefault();
                 if (joke == null)
                 {
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
@@ -157,7 +158,8 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var joke = jokeRepository.Find(j => j.Id == favoriteJokeId, null, new List<Expression<Func<Joke, object>>>() { j => j.UserFavorites }).FirstOrDefault();
+                var joke = jokeRepository.Find(j => j.Id == favoriteJokeId, null,
+                                               new List<Expression<Func<Joke, object>>>() { j => j.UserFavorites }).FirstOrDefault();
                 if (joke == null)
                 {
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
@@ -173,6 +175,17 @@ namespace Reenbit.ChuckNorris.Services
                 joke.UserFavorites.Remove(favoriteJokeForDelete);
                 var number = await (uow.SaveChangesAsync());
                 return number > 0;
+            }
+        }
+
+        public async Task<ICollection<JokeDto>> GetFavoriteJokesForUser(ClaimsPrincipal userClaimsPrincipal)
+        {
+            var user = await this.userManager.GetUserAsync(userClaimsPrincipal);
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                var favoriteJokes = await jokeRepository.FindAndMapAsync(JokeDtoSelector(), j => j.UserFavorites.Any(uf => uf.UserId == user.Id));
+                return favoriteJokes;
             }
         }
 

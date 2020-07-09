@@ -21,5 +21,7 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
         Task<bool> AddJokeToFavoriteAsync(int favoriteJokeId, ClaimsPrincipal userClaimPrincipal);
 
         Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, ClaimsPrincipal userClaimPrincipal);
+
+        Task<ICollection<JokeDto>> GetFavoriteJokesForUser(ClaimsPrincipal userClaimsPrincipal);
     }
 }

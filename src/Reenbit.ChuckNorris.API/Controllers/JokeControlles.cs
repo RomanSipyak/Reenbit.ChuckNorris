@@ -99,6 +99,21 @@ namespace Reenbit.ChuckNorris.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("user-favorite")]
+        [Authorize]
+        public async Task<IActionResult> GetAllFavoriteJokesForUser()
+        {
+            ClaimsPrincipal userClaimPrincipal = GetCurrentUserId();
+            var userFavoriteJokes = await this.jokeService.GetFavoriteJokesForUser(userClaimPrincipal);
+            if (userFavoriteJokes.Count() == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(userFavoriteJokes);
+        }
+
         private ClaimsPrincipal GetCurrentUserId()
         {
             var userClaimPrincipal = this.User;
