@@ -5,8 +5,10 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.Entities
 {
-    public class UserFavorite : BaseEntity
+    public class UserFavorite
     {
+        public DateTime CreatedAt { get; set; }
+
         public int UserId { get; set; }
 
         public User User { get; set; }

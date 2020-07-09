@@ -48,7 +48,7 @@ namespace Reenbit.ChuckNorris.Services
 
                 if (jokeId != null)
                 {
-                    var joke = await jokeRepository.FindAndMapAsync(JokeDtoSelector(), j => j.Id == jokeId.Value);
+                    var joke = await jokeRepository.FindAndMapAsync(jokeRepository.JokeToJokeDtoSelector(), j => j.Id == jokeId.Value);
                     return joke.FirstOrDefault();
                 }
 
@@ -97,7 +97,7 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                ICollection<JokeDto> returnJokesDtos = await jokeRepository.FindAndMapAsync(JokeDtoSelector(), j => j.Value.Contains(query));
+                ICollection<JokeDto> returnJokesDtos = await jokeRepository.FindAndMapAsync(jokeRepository.JokeToJokeDtoSelector(), j => j.Value.Contains(query));
                 return returnJokesDtos;
             }
         }
@@ -134,20 +134,17 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var joke = jokeRepository.Find(j => j.Id == favoriteJokeId, null,
-                                               new List<Expression<Func<Joke, object>>>() { j => j.UserFavorites }).FirstOrDefault();
-                if (joke == null)
+                if (!await jokeRepository.AnyAsync(j => j.Id == favoriteJokeId))
                 {
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
                 }
 
-                var user = await this.userManager.FindByIdAsync(userId);
-                if (joke.UserFavorites.Any(uf => uf.UserId == user.Id))
+                if (await jokeRepository.AnyAsync(j => j.Id == favoriteJokeId && j.UserFavorites.Any(uf => uf.UserId == Int32.Parse(userId))))
                 {
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} already your favorite");
                 }
 
-                joke.UserFavorites.Add(new UserFavorite { JokeId = favoriteJokeId, UserId = user.Id });
+                jokeRepository.AddUserFavorite(new UserFavorite { JokeId = favoriteJokeId, UserId = Int32.Parse(userId), CreatedAt = DateTime.UtcNow });
                 var number = await (uow.SaveChangesAsync());
                 return number > 0;
             }
@@ -158,42 +155,32 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var joke = jokeRepository.Find(j => j.Id == favoriteJokeId, null,
-                                               new List<Expression<Func<Joke, object>>>() { j => j.UserFavorites }).FirstOrDefault();
-                if (joke == null)
-                {
-                    throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
-                }
-
-                var user = await this.userManager.FindByIdAsync(userId);
-                var favoriteJokeForDelete = joke.UserFavorites.Where(uf => uf.UserId == user.Id).FirstOrDefault();
-                joke.UserFavorites.Remove(favoriteJokeForDelete);
+                var favoriteJokeForDelete = (await jokeRepository.FindUserFavoriteAsync(uf => uf.UserId == Int32.Parse(userId) && uf.JokeId == favoriteJokeId)).FirstOrDefault();
+                jokeRepository.RemoveUserFavorite(favoriteJokeForDelete);
                 var number = await (uow.SaveChangesAsync());
                 return number > 0;
             }
         }
 
-        public async Task<ICollection<JokeDto>> GetFavoriteJokesForUser(string userid)
+        public async Task<ICollection<JokeDto>> GetFavoriteJokesForUserAsync(string userid)
         {
             var user = await this.userManager.FindByIdAsync(userid);
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var favoriteJokes = await jokeRepository.FindAndMapAsync(JokeDtoSelector(), j => j.UserFavorites.Any(uf => uf.UserId == user.Id));
+                var favoriteJokes = await jokeRepository.FindAndMapAsync(jokeRepository.JokeToJokeDtoSelector(), j => j.UserFavorites.Any(uf => uf.UserId == user.Id));
                 return favoriteJokes;
             }
         }
 
-        private Expression<Func<Joke, JokeDto>> JokeDtoSelector()
+        public async Task<ICollection<JokeDto>> GetTopFavoriteJokesForUserAsync(string userid)
         {
-            return j => new JokeDto
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
-                Id = j.Id,
-                IconUrl = j.IconUrl,
-                Url = j.Url,
-                Value = j.Value,
-                Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList()
-            };
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                var favoriteJokes = await jokeRepository.FindUserFavoritesJokesTopAsync(userid, 3);
+                return favoriteJokes;
+            }
         }
 
         private T GetRandomElement<T>(IEnumerable<T> collection)

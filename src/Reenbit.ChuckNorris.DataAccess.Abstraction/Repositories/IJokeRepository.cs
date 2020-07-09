@@ -10,5 +10,14 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 {
     public interface IJokeRepository : IRepository<Joke, int>
     {
+        public void AddUserFavorite(UserFavorite userFavorite);
+
+        public void RemoveUserFavorite(UserFavorite userFavorite);
+
+        public Task<ICollection<UserFavorite>> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter);
+
+        public Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(string userId, int topNumber);
+
+        public Expression<Func<Joke, JokeDto>> JokeToJokeDtoSelector();
     }
 }

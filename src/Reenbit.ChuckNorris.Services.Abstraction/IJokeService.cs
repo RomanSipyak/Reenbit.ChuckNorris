@@ -22,6 +22,8 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 
         Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, string userId);
 
-        Task<ICollection<JokeDto>> GetFavoriteJokesForUser(string userId);
+        Task<ICollection<JokeDto>> GetFavoriteJokesForUserAsync(string userId);
+
+        Task<ICollection<JokeDto>> GetTopFavoriteJokesForUserAsync(string userid);
     }
 }

@@ -17,7 +17,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 {
     [ApiController]
     [Route("api/jokes")]
-    public class JokeControlles : ControllerBase
+    public class JokeControlles : BaseApiController
     {
         private readonly IJokeService jokeService;
 
@@ -72,15 +72,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> AddJokeToFavorite([FromRoute] int favoriteJokeId)
         {
-            string userId = GetCurrentUserId();
-            if (await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, userId))
-            {
-                return Ok("We added your joke to favorite");
-            }
-            else
-            {
-                throw new Exception("Something was wrong");
-            }
+            return Ok(await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId));
         }
 
         [HttpDelete]
@@ -88,15 +80,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
         {
-            string userId = GetCurrentUserId();
-            if (await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, userId))
-            {
-                return Ok("We deleted your joke from favorite");
-            }
-            else
-            {
-                throw new Exception("Something was wrong");
-            }
+            return Ok(await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId));
         }
 
         [HttpGet]
@@ -104,15 +88,17 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllFavoriteJokesForUser()
         {
-            string userId = GetCurrentUserId();
-            var userFavoriteJokes = await this.jokeService.GetFavoriteJokesForUser(userId);
+            var userFavoriteJokes = await this.jokeService.GetFavoriteJokesForUserAsync(this.UserId);
             return Ok(userFavoriteJokes);
         }
 
-        private string GetCurrentUserId()
+        [HttpGet]
+        [Route("user-favorite-newest-top")]
+        [Authorize]
+        public async Task<IActionResult> GetTopFavoriteJokesForUser()
         {
-            var userId = this.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            return userId;
+            var userFavoriteJokes = await this.jokeService.GetTopFavoriteJokesForUserAsync(this.UserId);
+            return Ok(userFavoriteJokes);
         }
     }
 }
