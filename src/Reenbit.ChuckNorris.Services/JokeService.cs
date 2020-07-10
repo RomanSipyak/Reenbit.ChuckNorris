@@ -155,7 +155,7 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var favoriteJokeForDelete = (await jokeRepository.FindUserFavoriteAsync(uf => uf.UserId == Int32.Parse(userId) && uf.JokeId == favoriteJokeId)).FirstOrDefault();
+                var favoriteJokeForDelete = await jokeRepository.FindUserFavoriteAsync(uf => uf.UserId == Int32.Parse(userId) && uf.JokeId == favoriteJokeId);
                 jokeRepository.RemoveUserFavorite(favoriteJokeForDelete);
                 var number = await (uow.SaveChangesAsync());
                 return number > 0;

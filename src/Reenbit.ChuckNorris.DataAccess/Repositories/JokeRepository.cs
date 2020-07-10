@@ -24,9 +24,9 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             this.DbContext.Set<UserFavorite>().Remove(userFavorite);
         }
 
-        public async Task<ICollection<UserFavorite>> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter)
+        public async Task<UserFavorite> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter)
         {
-            return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(filter).ToListAsync();
+            return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(filter).FirstAsync();
         }
 
         public async Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(string userId, int topNumber)
