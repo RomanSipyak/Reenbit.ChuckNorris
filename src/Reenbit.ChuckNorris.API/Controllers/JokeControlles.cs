@@ -95,5 +95,12 @@ namespace Reenbit.ChuckNorris.API.Controllers
             var userFavoriteJokes = await this.jokeService.GetTopFavoriteJokesForUserAsync(this.UserId);
             return Ok(userFavoriteJokes);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllJokes()
+        {
+            var jokes = await this.jokeService.GetAllJokesAsync();
+            return Ok(jokes);
+        }
     }
 }

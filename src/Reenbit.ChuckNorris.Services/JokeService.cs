@@ -102,6 +102,16 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
+        public async Task<ICollection<JokeDto>> GetAllJokesAsync()
+        {
+            using(IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                ICollection<JokeDto> returnJokesDtos = await jokeRepository.FindAndMapAsync(jokeRepository.JokeToJokeDtoSelector());
+                return returnJokesDtos;
+            }
+        }
+
         public async Task<JokeDto> CreateNewJokeAsync(CreateJokeDto jokeDto)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
