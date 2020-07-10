@@ -18,15 +18,13 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 
         Task<JokeDto> GetJokeAsync(int jokeId);
 
-        Task<ICollection<string>> GetAllCategoriesAsync();
-
         Task<JokeDto> CreateNewJokeAsync(CreateJokeDto jokeDto);
 
         Task<bool> AddJokeToFavoriteAsync(int favoriteJokeId, string userId);
 
         Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, string userId);
 
-        Task<bool> DeleteJokeAsync(int jokeId);
+        Task DeleteJokeAsync(int jokeId);
 
         Task<ICollection<JokeDto>> GetFavoriteJokesForUserAsync(string userId);
 

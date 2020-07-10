@@ -139,25 +139,14 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<bool> DeleteJokeAsync(int jokeId)
+        public async Task DeleteJokeAsync(int jokeId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
                 var joke = await jokeRepository.GetByIdAsync(jokeId);
                 jokeRepository.RemoveJoke(joke);
-                var number = await uow.SaveChangesAsync();
-                return number > 0;
-            }
-        }
-
-        public async Task<ICollection<string>> GetAllCategoriesAsync()
-        {
-            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
-            {
-                var categoryRepository = uow.GetRepository<ICategoryRepository>();
-
-                return await categoryRepository.FindAndMapAsync(c => c.Title);
+                await uow.SaveChangesAsync();
             }
         }
 

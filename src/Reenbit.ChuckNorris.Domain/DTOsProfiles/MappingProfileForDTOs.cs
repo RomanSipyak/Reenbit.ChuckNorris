@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Reenbit.ChuckNorris.Domain.DTOs.CategoryDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
@@ -21,6 +22,8 @@ namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
                                                .ForMember(desc => desc.LastName, opt => opt.MapFrom(src => src.User.LastName))
                                                .ForMember(desc => desc.Id, opt => opt.MapFrom(src => src.User.Id))
                                                .ForMember(desc => desc.Roles, opt => opt.MapFrom(src => src.Roles));
+            CreateMap<CreateCategoryDTO, Category>();
+            CreateMap<Category, CategoryDTO>();
         }
     }
 }

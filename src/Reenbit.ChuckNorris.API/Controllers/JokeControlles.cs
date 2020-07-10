@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Reenbit.ChuckNorris.Domain.DTOs;
+using Reenbit.ChuckNorris.Domain.DTOs.CategoryDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
@@ -20,10 +21,12 @@ namespace Reenbit.ChuckNorris.API.Controllers
     public class JokeControlles : BaseApiController
     {
         private readonly IJokeService jokeService;
+        private readonly ICategoryService categoryService;
 
-        public JokeControlles(IJokeService jokeService)
+        public JokeControlles(IJokeService jokeService, ICategoryService categoryService)
         {
             this.jokeService = jokeService;
+            this.categoryService = categoryService;
         }
 
         [HttpGet]
@@ -51,7 +54,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Route("categories")]
         public async Task<IActionResult> GetAllCategories()
         {
-            var categories = await jokeService.GetAllCategoriesAsync();
+            var categories = await categoryService.GetAllCategoriesAsync();
             return Ok(categories);
         }
 
@@ -111,11 +114,35 @@ namespace Reenbit.ChuckNorris.API.Controllers
             return Ok(joke);
         }
 
+        [HttpPut]
+        [Route("{jokeId}")]
+        public async Task<IActionResult> UpdateJoke([FromRoute]int jokeId)
+        {
+            return null;
+        }
+
         [HttpDelete]
         [Route("{jokeId}")]
         public async Task<IActionResult> DeleteJoke([FromRoute]int jokeId)
         {
-            return Ok(await this.jokeService.DeleteJokeAsync(jokeId));
+            await this.jokeService.DeleteJokeAsync(jokeId);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("categories")]
+        public async Task<IActionResult> CreateCategory(CreateCategoryDTO createCategoryDTO)
+        {
+            var categoryDto = await categoryService.CreateNewCategoryAsync(createCategoryDTO);
+            return CreatedAtAction(nameof(CreateCategory), categoryDto);
+        }
+
+        [HttpDelete]
+        [Route("categories/{categoryId}")]
+        public async Task<IActionResult> DeleteCategory([FromRoute]int categoryId)
+        {
+            await this.categoryService.DeleteCategoryAsync(categoryId);
+            return Ok();
         }
     }
 }
