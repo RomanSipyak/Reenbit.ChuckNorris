@@ -14,7 +14,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 
         public void RemoveUserFavorite(UserFavorite userFavorite);
 
-        public Task<ICollection<UserFavorite>> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter);
+        public Task<UserFavorite> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter);
 
         public Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(string userId, int topNumber);
 
