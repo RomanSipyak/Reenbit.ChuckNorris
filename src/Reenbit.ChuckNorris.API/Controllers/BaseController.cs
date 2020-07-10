@@ -9,11 +9,11 @@ namespace Reenbit.ChuckNorris.API.Controllers
 {
     public class BaseApiController : ControllerBase
     {
-        public string UserId => GetCurrentUserId();
+        public int UserId => GetCurrentUserId();
 
-        protected string GetCurrentUserId()
+        protected int GetCurrentUserId()
         {
-            var userId = this.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var userId = Int32.Parse(this.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             return userId;
         }
     }

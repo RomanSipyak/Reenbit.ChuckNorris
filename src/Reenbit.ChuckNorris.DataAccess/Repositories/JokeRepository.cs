@@ -29,9 +29,9 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(filter).FirstAsync();
         }
 
-        public async Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(string userId, int topNumber)
+        public async Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(int userId, int topNumber)
         {
-            return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(uf => uf.UserId == Int32.Parse(userId)).
+            return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(uf => uf.UserId == userId).
                                                       OrderByDescending(uf => uf.CreatedAt).Take(topNumber)
                                                       .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
