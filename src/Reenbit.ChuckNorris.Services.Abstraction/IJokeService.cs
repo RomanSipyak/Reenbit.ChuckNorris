@@ -16,6 +16,8 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 
         Task<ICollection<JokeDto>> GetAllJokesAsync();
 
+        Task<JokeDto> GetJokeAsync(int jokeId);
+
         Task<ICollection<string>> GetAllCategoriesAsync();
 
         Task<JokeDto> CreateNewJokeAsync(CreateJokeDto jokeDto);

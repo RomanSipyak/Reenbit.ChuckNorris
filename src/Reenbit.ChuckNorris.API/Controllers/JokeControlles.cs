@@ -102,5 +102,13 @@ namespace Reenbit.ChuckNorris.API.Controllers
             var jokes = await this.jokeService.GetAllJokesAsync();
             return Ok(jokes);
         }
+
+        [HttpGet]
+        [Route("{jokeId}")]
+        public async Task<IActionResult> GetJoke([FromRoute]int jokeId)
+        {
+            var joke = await this.jokeService.GetJokeAsync(jokeId);
+            return Ok(joke);
+        }
     }
 }
