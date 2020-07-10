@@ -139,7 +139,7 @@ namespace Reenbit.ChuckNorris.Services
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
                 }
 
-                if (await jokeRepository.AnyAsync(j => j.Id == favoriteJokeId && j.UserFavorites.Any(uf => uf.UserId == userId))
+                if (await jokeRepository.AnyAsync(j => j.Id == favoriteJokeId && j.UserFavorites.Any(uf => uf.UserId == userId)))
                 {
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} already your favorite");
                 }
