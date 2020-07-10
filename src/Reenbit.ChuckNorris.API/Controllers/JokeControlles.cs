@@ -110,5 +110,12 @@ namespace Reenbit.ChuckNorris.API.Controllers
             var joke = await this.jokeService.GetJokeAsync(jokeId);
             return Ok(joke);
         }
+
+        [HttpDelete]
+        [Route("{jokeId}")]
+        public async Task<IActionResult> DeleteJoke([FromRoute]int jokeId)
+        {
+            return Ok(await this.jokeService.DeleteJokeAsync(jokeId));
+        }
     }
 }

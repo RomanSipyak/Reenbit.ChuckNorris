@@ -63,5 +63,33 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 Categories = uf.Joke.JokeCategories.Select(jc => jc.Category.Title).ToList()
             };
         }
+
+        public void RemoveJoke(Joke joke)
+        {
+            if (joke != null)
+            {
+                RemoveLinkedJokeCategories(joke);
+                RemoveLinkedUserFavorites(joke);
+                this.Remove(joke);
+            }
+        }
+
+        private void RemoveLinkedJokeCategories(Joke joke)
+        {
+            var jokeCategories = this.DbContext.Set<JokeCategory>().AsQueryable().Where(jc => jc.JokeId == joke.Id);
+            if (jokeCategories.Count() != 0)
+            {
+                this.DbContext.Set<JokeCategory>().RemoveRange(jokeCategories);
+            }
+        }
+
+        private void RemoveLinkedUserFavorites(Joke joke)
+        {
+            var userFavorites = this.DbContext.Set<UserFavorite>().AsQueryable().Where(jc => jc.JokeId == joke.Id);
+            if (userFavorites.Count() != 0)
+            {
+                this.DbContext.Set<UserFavorite>().RemoveRange(userFavorites);
+            }
+        }
     }
 }

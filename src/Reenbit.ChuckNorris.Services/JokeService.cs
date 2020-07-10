@@ -104,11 +104,21 @@ namespace Reenbit.ChuckNorris.Services
 
         public async Task<ICollection<JokeDto>> GetAllJokesAsync()
         {
-            using(IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
                 ICollection<JokeDto> returnJokesDtos = await jokeRepository.FindAndMapAsync(jokeRepository.JokeToJokeDtoSelector());
                 return returnJokesDtos;
+            }
+        }
+
+        public async Task<JokeDto> GetJokeAsync(int jokeId)
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                JokeDto returnJokeDto = await jokeRepository.FindByKeyAndMapAsync(j => j.Id == jokeId, jokeRepository.JokeToJokeDtoSelector());
+                return returnJokeDto;
             }
         }
 
@@ -126,6 +136,18 @@ namespace Reenbit.ChuckNorris.Services
                 var returnJoke = mapper.Map<JokeDto>(joke);
                 returnJoke.Categories = joke.JokeCategories.Select(jc => jc.Category.Title).ToList();
                 return returnJoke;
+            }
+        }
+
+        public async Task<bool> DeleteJokeAsync(int jokeId)
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                var joke = await jokeRepository.GetByIdAsync(jokeId);
+                jokeRepository.RemoveJoke(joke);
+                var number = await uow.SaveChangesAsync();
+                return number > 0;
             }
         }
 
