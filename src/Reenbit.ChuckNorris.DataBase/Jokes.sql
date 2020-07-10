@@ -4,7 +4,7 @@
     [IconUrl] NVARCHAR(2048) NULL,
     [Url] NVARCHAR(2048) NULL,
     [Value] NVARCHAR(2000) NOT NULL,
-    [CreatedAt] DATETIME2 NULL,
-    [UpdatedAt] DATETIME2 NULL,
+    [CreatedAt] DATETIME2 NOT NULL,
+    [UpdatedAt] DATETIME2 NOT NULL,
     CONSTRAINT [PK_Jokes]  PRIMARY KEY CLUSTERED ([Id] ASC)
 );
