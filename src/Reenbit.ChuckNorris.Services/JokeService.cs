@@ -156,7 +156,11 @@ namespace Reenbit.ChuckNorris.Services
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
                 var favoriteJokeForDelete = (await jokeRepository.FindUserFavoriteAsync(uf => uf.UserId == Int32.Parse(userId) && uf.JokeId == favoriteJokeId)).FirstOrDefault();
-                jokeRepository.RemoveUserFavorite(favoriteJokeForDelete);
+                if (favoriteJokeForDelete != null)
+                {
+                    jokeRepository.RemoveUserFavorite(favoriteJokeForDelete);
+                }
+
                 var number = await (uow.SaveChangesAsync());
                 return number > 0;
             }

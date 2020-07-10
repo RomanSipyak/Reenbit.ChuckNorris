@@ -31,11 +31,6 @@ namespace Reenbit.ChuckNorris.API.Controllers
         public async Task<IActionResult> GetRandomJoke([FromQuery] string category)
         {
             var jokeDto = await jokeService.GetRandomJokeAsync(category);
-            if (jokeDto == null)
-            {
-                return NotFound();
-            }
-
             return Ok(jokeDto);
         }
 
