@@ -1,16 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Services.Abstraction;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.API.Controllers

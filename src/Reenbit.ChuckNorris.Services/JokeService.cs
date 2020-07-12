@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Identity;
 using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
@@ -10,9 +8,6 @@ using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.Services

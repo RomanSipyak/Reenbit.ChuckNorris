@@ -1,9 +1,5 @@
 ﻿using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
-using Reenbit.ChuckNorris.Domain.Entities;
-using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.Services.Abstraction
