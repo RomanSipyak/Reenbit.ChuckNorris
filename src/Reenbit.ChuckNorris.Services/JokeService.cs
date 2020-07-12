@@ -124,7 +124,7 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<bool> AddJokeToFavoriteAsync(int favoriteJokeId, int userId)
+        public async Task AddJokeToFavoriteAsync(int favoriteJokeId, int userId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -140,12 +140,11 @@ namespace Reenbit.ChuckNorris.Services
                 }
 
                 jokeRepository.AddUserFavorite(new UserFavorite { JokeId = favoriteJokeId, UserId = userId, CreatedAt = DateTime.UtcNow });
-                var number = await (uow.SaveChangesAsync());
-                return number > 0;
+                await uow.SaveChangesAsync();
             }
         }
 
-        public async Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, int userId)
+        public async Task DeleteJokeFromFavoriteAsync(int favoriteJokeId, int userId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -156,8 +155,7 @@ namespace Reenbit.ChuckNorris.Services
                     jokeRepository.RemoveUserFavorite(favoriteJokeForDelete);
                 }
 
-                var number = await (uow.SaveChangesAsync());
-                return number > 0;
+                await uow.SaveChangesAsync();
             }
         }
 
@@ -166,7 +164,7 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var favoriteJokes = await jokeRepository.FindAndMapAsync(jokeRepository.JokeToJokeDtoSelector(), j => j.UserFavorites.Any(uf => uf.UserId == userId));
+                var favoriteJokes = await jokeRepository.FindFavoriteJokesForUser(userId);
                 return favoriteJokes;
             }
         }

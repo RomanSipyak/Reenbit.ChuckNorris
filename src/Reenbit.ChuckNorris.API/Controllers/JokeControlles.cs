@@ -1,3 +1,4 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
@@ -64,7 +65,8 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> AddJokeToFavorite([FromRoute] int favoriteJokeId)
         {
-            return Ok(await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId));
+            await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId);
+            return CreatedAtAction(nameof(AddJokeToFavorite),$"Your joke added to favorite");
         }
 
         [HttpDelete]
@@ -72,7 +74,8 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
         {
-            return Ok(await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId));
+            await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId)
+            return Ok();
         }
 
         [HttpGet]

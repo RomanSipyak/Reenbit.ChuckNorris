@@ -1,3 +1,4 @@
+﻿using Microsoft.EntityFrameworkCore;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
@@ -30,6 +31,13 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
         {
             return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(uf => uf.UserId == userId).
                                                       OrderByDescending(uf => uf.CreatedAt).Take(topNumber)
+                                                      .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
+        }
+
+        public async Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId)
+        {
+            return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(uf => uf.UserId == userId).
+                                                      OrderByDescending(uf => uf.CreatedAt)
                                                       .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
 
