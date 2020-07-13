@@ -74,7 +74,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
         {
-            await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId)
+            await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId);
             return Ok();
         }
 
