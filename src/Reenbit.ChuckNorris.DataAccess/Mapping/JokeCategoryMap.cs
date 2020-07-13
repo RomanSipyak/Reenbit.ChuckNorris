@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Reenbit.ChuckNorris.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Mapping
 {
@@ -11,7 +8,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
     {
         public void Configure(EntityTypeBuilder<JokeCategory> builder)
         {
-            builder.ToTable("JokeCategory");
+            builder.ToTable("JokeCategories");
 
             builder.HasKey(jc => new { jc.JokeId, jc.CategoryId });
 

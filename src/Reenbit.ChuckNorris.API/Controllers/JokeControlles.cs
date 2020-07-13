@@ -1,22 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Services.Abstraction;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.API.Controllers
 {
     [ApiController]
     [Route("api/jokes")]
-    public class JokeControlles : ControllerBase
+    public class JokeControlles : BaseApiController
     {
         private readonly IJokeService jokeService;
 
@@ -64,6 +58,42 @@ namespace Reenbit.ChuckNorris.API.Controllers
         {
             var joke = await jokeService.CreateNewJokeAsync(createJokeDto);
             return CreatedAtAction(nameof(CreateJoke), joke);
+        }
+
+        [HttpPost]
+        [Route("favorite/{favoriteJokeId}")]
+        [Authorize]
+        public async Task<IActionResult> AddJokeToFavorite([FromRoute] int favoriteJokeId)
+        {
+            await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId);
+            return CreatedAtAction(nameof(AddJokeToFavorite),$"Your joke added to favorite");
+        }
+
+        [HttpDelete]
+        [Route("favorite/{favoriteJokeId}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
+        {
+            await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("user-favorite")]
+        [Authorize]
+        public async Task<IActionResult> GetAllFavoriteJokesForUser()
+        {
+            var userFavoriteJokes = await this.jokeService.GetFavoriteJokesForUserAsync(this.UserId);
+            return Ok(userFavoriteJokes);
+        }
+
+        [HttpGet]
+        [Route("user-favorite-newest-top")]
+        [Authorize]
+        public async Task<IActionResult> GetTopFavoriteJokesForUser()
+        {
+            var userFavoriteJokes = await this.jokeService.GetTopFavoriteJokesForUserAsync(this.UserId);
+            return Ok(userFavoriteJokes);
         }
     }
 }

@@ -2,10 +2,6 @@
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
 {

@@ -1,9 +1,5 @@
-﻿using Microsoft.VisualBasic;
-using Newtonsoft.Json;
-using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
 {

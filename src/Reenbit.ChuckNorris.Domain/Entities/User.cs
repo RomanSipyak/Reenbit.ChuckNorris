@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.Entities
 {
@@ -18,5 +16,7 @@ namespace Reenbit.ChuckNorris.Domain.Entities
         public virtual ICollection<IdentityUserToken<int>> Tokens { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; }
+
+        public virtual ICollection<UserFavorite> UserFavorites { get; set; } = new List<UserFavorite>();
     }
 }

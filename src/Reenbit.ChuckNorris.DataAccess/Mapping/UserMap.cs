@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Reenbit.ChuckNorris.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Mapping
 {
@@ -29,6 +26,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
             builder.HasMany(u => u.UserRoles)
                    .WithOne()
                    .HasForeignKey(ur => ur.UserId)
+                   .IsRequired();
+
+            builder.HasMany(u => u.UserFavorites)
+                   .WithOne(uf => uf.User)
+                   .HasForeignKey(uf => uf.UserId)
                    .IsRequired();
         }
     }

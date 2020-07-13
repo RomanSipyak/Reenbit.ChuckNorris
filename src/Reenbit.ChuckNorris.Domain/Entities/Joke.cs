@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Reenbit.ChuckNorris.Domain.Entities
 {
@@ -15,5 +13,7 @@ namespace Reenbit.ChuckNorris.Domain.Entities
         public string IconUrl { get; set; }
 
         public ICollection<JokeCategory> JokeCategories { get; set; } = new List<JokeCategory>();
+
+        public virtual ICollection<UserFavorite> UserFavorites { get; set; } = new List<UserFavorite>();
     }
 }

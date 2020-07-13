@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Reenbit.ChuckNorris.Domain.Entities
+﻿namespace Reenbit.ChuckNorris.Domain.Entities
 {
     public class JokeCategory
     {

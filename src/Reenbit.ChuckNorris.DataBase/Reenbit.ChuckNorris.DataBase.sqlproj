@@ -60,7 +60,7 @@
   <ItemGroup>
     <Build Include="Jokes.sql" />
     <Build Include="Categories.sql" />
-    <Build Include="JokeCategory.sql" />
+    <Build Include="JokeCategories.sql" />
     <Build Include="AspNetUsers.sql" />
     <Build Include="AspNetUserRoles.sql" />
     <Build Include="AspNetUserLogins.sql" />
@@ -68,5 +68,6 @@
     <Build Include="AspNetRoles.sql" />
     <Build Include="AspNetRoleClaims.sql" />
     <Build Include="AspNetUserTokens.sql" />
+    <Build Include="UserFavorites.sql" />
   </ItemGroup>
 </Project>

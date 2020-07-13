@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Reenbit.ChuckNorris.DataAccess.Mapping;
 using Reenbit.ChuckNorris.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess
 {
@@ -26,6 +23,7 @@ namespace Reenbit.ChuckNorris.DataAccess
             modelBuilder.ApplyConfiguration(new CategoryMap());
             modelBuilder.ApplyConfiguration(new JokeMap());
             modelBuilder.ApplyConfiguration(new JokeCategoryMap());
+            modelBuilder.ApplyConfiguration(new UserFavoriteMap());
         }
     }
 }
