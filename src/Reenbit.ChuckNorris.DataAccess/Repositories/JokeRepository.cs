@@ -29,16 +29,16 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(filter).ToListAsync();
         }
 
-        public async Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(string userId, int topNumber)
+        public async Task<ICollection<JokeDTO>> FindUserFavoritesJokesTopAsync(string userId, int topNumber)
         {
             return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(uf => uf.UserId == Int32.Parse(userId)).
                                                       OrderByDescending(uf => uf.CreatedAt).Take(topNumber)
                                                       .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
 
-        public Expression<Func<Joke, JokeDto>> JokeToJokeDtoSelector()
+        public Expression<Func<Joke, JokeDTO>> JokeToJokeDtoSelector()
         {
-            return j => new JokeDto
+            return j => new JokeDTO
             {
                 Id = j.Id,
                 IconUrl = j.IconUrl,
@@ -50,9 +50,9 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             };
         }
 
-        private Expression<Func<UserFavorite, JokeDto>> UserFavoriteToJokeDtoSelector()
+        private Expression<Func<UserFavorite, JokeDTO>> UserFavoriteToJokeDtoSelector()
         {
-            return uf => new JokeDto
+            return uf => new JokeDTO
             {
                 Id = uf.Joke.Id,
                 IconUrl = uf.Joke.IconUrl,

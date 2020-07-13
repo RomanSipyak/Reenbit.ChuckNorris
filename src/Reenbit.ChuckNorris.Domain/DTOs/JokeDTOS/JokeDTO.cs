@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
 {
-    public class JokeDto
+    public class JokeDTO
     {
         public int Id { get; set; }
 

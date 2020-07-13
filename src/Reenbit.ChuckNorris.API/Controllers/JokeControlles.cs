@@ -56,7 +56,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateJoke(CreateJokeDto createJokeDto)
+        public async Task<IActionResult> CreateJoke(CreateJokeDTO createJokeDto)
         {
             var joke = await jokeService.CreateNewJokeAsync(createJokeDto);
             return CreatedAtAction(nameof(CreateJoke), joke);
