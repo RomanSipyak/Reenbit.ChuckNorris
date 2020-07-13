@@ -5,12 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using Reenbit.ChuckNorris.API.Authentication;
 using Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
-using Reenbit.ChuckNorris.Services;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.API.Controllers

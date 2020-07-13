@@ -2,10 +2,6 @@
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
 {
@@ -13,8 +9,8 @@ namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
     {
         public MappingProfileForDTOs()
         {
-            CreateMap<Joke, JokeDTO>().ReverseMap();
-            CreateMap<CreateJokeDTO, Joke>();
+            CreateMap<Joke, JokeDto>().ReverseMap();
+            CreateMap<CreateJokeDto, Joke>();
             CreateMap<UserRegisterDto, User>().ForMember(desc => desc.UserName, opt => opt.MapFrom(src => src.Email));
             CreateMap<SignInUserDto, UserDto>().ForMember(desc => desc.Email, opt => opt.MapFrom(src => src.User.Email))
                                                .ForMember(desc => desc.FirstName, opt => opt.MapFrom(src => src.User.FirstName))

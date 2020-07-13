@@ -1,16 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Services.Abstraction;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.API.Controllers
@@ -56,7 +49,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateJoke(CreateJokeDTO createJokeDto)
+        public async Task<IActionResult> CreateJoke(CreateJokeDto createJokeDto)
         {
             var joke = await jokeService.CreateNewJokeAsync(createJokeDto);
             return CreatedAtAction(nameof(CreateJoke), joke);
@@ -67,7 +60,8 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> AddJokeToFavorite([FromRoute] int favoriteJokeId)
         {
-            return CreatedAtAction(nameof(AddJokeToFavorite), await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId));
+            await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId);
+            return CreatedAtAction(nameof(AddJokeToFavorite), "We added your joke to favorite");
         }
 
         [HttpDelete]
@@ -75,7 +69,8 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
         {
-            return Ok(await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId));
+            await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId);
+            return Ok();
         }
 
         [HttpGet]
