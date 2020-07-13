@@ -24,11 +24,6 @@ namespace Reenbit.ChuckNorris.API.Controllers
         public async Task<IActionResult> GetRandomJoke([FromQuery] string category)
         {
             var jokeDto = await jokeService.GetRandomJokeAsync(category);
-            if (jokeDto == null)
-            {
-                return NotFound();
-            }
-
             return Ok(jokeDto);
         }
 
@@ -66,7 +61,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         public async Task<IActionResult> AddJokeToFavorite([FromRoute] int favoriteJokeId)
         {
             await jokeService.AddJokeToFavoriteAsync(favoriteJokeId, this.UserId);
-            return CreatedAtAction(nameof(AddJokeToFavorite),$"Your joke added to favorite");
+            return CreatedAtAction(nameof(AddJokeToFavorite), "We added your joke to favorite");
         }
 
         [HttpDelete]
