@@ -3,10 +3,8 @@ using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Reenbit.ChuckNorris.Domain.Entities;
 using System.Linq;
 

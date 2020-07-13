@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,16 +23,25 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             this.DbContext.Set<UserFavorite>().Remove(userFavorite);
         }
 
-        public async Task<ICollection<UserFavorite>> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter)
+        public async Task<UserFavorite> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter)
         {
-            return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(filter).ToListAsync();
+            return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(filter).FirstAsync();
         }
 
-        public async Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(string userId, int topNumber)
+        public async Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(int userId, int topNumber)
         {
-            return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(uf => uf.UserId == Int32.Parse(userId)).
-                                                      OrderByDescending(uf => uf.CreatedAt).Take(topNumber)
-                                                      .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
+            return await this.DbContext.Set<UserFavorite>().AsQueryable()
+                .Where(uf => uf.UserId == userId)
+                .OrderByDescending(uf => uf.CreatedAt).Take(topNumber)
+                .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
+        }
+
+        public async Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId)
+        {
+            return await this.DbContext.Set<UserFavorite>().AsQueryable()
+                .Where(uf => uf.UserId == userId)
+                .OrderByDescending(uf => uf.CreatedAt)
+                .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
 
         public Expression<Func<Joke, JokeDto>> JokeToJokeDtoSelector()
@@ -95,17 +102,19 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
 
         public async Task UpdateJokeCategoriesAsync(int jokeId, ICollection<int> categories)
         {
-            var intersectJokesKategories = await this.DbContext.Set<JokeCategory>().AsQueryable()
+            var intersectJokesCategories = await this.DbContext.Set<JokeCategory>().AsQueryable()
                 .Where(jc => jc.JokeId == jokeId && categories.Any(c => c == jc.CategoryId)).ToListAsync();
             var leftSetJokeCategories = await this.DbContext.Set<JokeCategory>().AsQueryable()
                 .Where(jc => jc.JokeId == jokeId && categories.All(c => c != jc.CategoryId)).ToListAsync();
             var rightSetJokeCategoriesIds = categories
-                .Except(intersectJokesKategories.Select(jc => jc.CategoryId))
-                .Except(leftSetJokeCategories.Select(jc => jc.CategoryId))
-                .Select(c => new JokeCategory { CategoryId = c, JokeId = jokeId}).ToList();
+                .Except(intersectJokesCategories.Select(jc => jc.CategoryId))
+                .Except(leftSetJokeCategories.Select(jc => jc.CategoryId));
+            var rightSetJokeCategories = await this.DbContext.Set<Category>().AsQueryable()
+                .Where(c => rightSetJokeCategoriesIds.Any(ci => ci == c.Id))
+                .Select(c => new JokeCategory { CategoryId = c.Id, JokeId = jokeId }).ToListAsync();
             this.DbContext.Set<JokeCategory>().RemoveRange(leftSetJokeCategories);
-            this.DbContext.Set<JokeCategory>().AddRange(rightSetJokeCategoriesIds);
-            intersectJokesKategories.AddRange(rightSetJokeCategoriesIds);
+            this.DbContext.Set<JokeCategory>().AddRange(rightSetJokeCategories);
+            intersectJokesCategories.AddRange(rightSetJokeCategories);
         }
     }
 }

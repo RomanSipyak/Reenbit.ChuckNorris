@@ -2,8 +2,6 @@
 using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.Infrastructure;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess
 {

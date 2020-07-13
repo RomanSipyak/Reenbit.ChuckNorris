@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Identity;
 using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
@@ -10,9 +8,6 @@ using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.Services
@@ -150,7 +145,7 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<bool> AddJokeToFavoriteAsync(int favoriteJokeId, string userId)
+        public async Task AddJokeToFavoriteAsync(int favoriteJokeId, int userId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -160,50 +155,47 @@ namespace Reenbit.ChuckNorris.Services
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} doesn't exist");
                 }
 
-                if (await jokeRepository.AnyAsync(j => j.Id == favoriteJokeId && j.UserFavorites.Any(uf => uf.UserId == Int32.Parse(userId))))
+                if (await jokeRepository.AnyAsync(j => j.Id == favoriteJokeId && j.UserFavorites.Any(uf => uf.UserId == userId)))
                 {
                     throw new ArgumentException($"Joke with Id = {favoriteJokeId} already your favorite");
                 }
 
-                jokeRepository.AddUserFavorite(new UserFavorite { JokeId = favoriteJokeId, UserId = Int32.Parse(userId), CreatedAt = DateTime.UtcNow });
-                var number = await (uow.SaveChangesAsync());
-                return number > 0;
+                jokeRepository.AddUserFavorite(new UserFavorite { JokeId = favoriteJokeId, UserId = userId, CreatedAt = DateTime.UtcNow });
+                await uow.SaveChangesAsync();
             }
         }
 
-        public async Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, string userId)
+        public async Task DeleteJokeFromFavoriteAsync(int favoriteJokeId, int userId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var favoriteJokeForDelete = (await jokeRepository.FindUserFavoriteAsync(uf => uf.UserId == Int32.Parse(userId) && uf.JokeId == favoriteJokeId)).FirstOrDefault();
+                var favoriteJokeForDelete = (await jokeRepository.FindUserFavoriteAsync(uf => uf.UserId == userId && uf.JokeId == favoriteJokeId));
                 if (favoriteJokeForDelete != null)
                 {
                     jokeRepository.RemoveUserFavorite(favoriteJokeForDelete);
                 }
 
-                var number = await (uow.SaveChangesAsync());
-                return number > 0;
+                await uow.SaveChangesAsync();
             }
         }
 
-        public async Task<ICollection<JokeDto>> GetFavoriteJokesForUserAsync(string userid)
+        public async Task<ICollection<JokeDto>> GetFavoriteJokesForUserAsync(int userId)
         {
-            var user = await this.userManager.FindByIdAsync(userid);
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var favoriteJokes = await jokeRepository.FindAndMapAsync(jokeRepository.JokeToJokeDtoSelector(), j => j.UserFavorites.Any(uf => uf.UserId == user.Id));
+                var favoriteJokes = await jokeRepository.FindFavoriteJokesForUser(userId);
                 return favoriteJokes;
             }
         }
 
-        public async Task<ICollection<JokeDto>> GetTopFavoriteJokesForUserAsync(string userid)
+        public async Task<ICollection<JokeDto>> GetTopFavoriteJokesForUserAsync(int userId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var favoriteJokes = await jokeRepository.FindUserFavoritesJokesTopAsync(userid, 3);
+                var favoriteJokes = await jokeRepository.FindUserFavoritesJokesTopAsync(userId, 3);
                 return favoriteJokes;
             }
         }

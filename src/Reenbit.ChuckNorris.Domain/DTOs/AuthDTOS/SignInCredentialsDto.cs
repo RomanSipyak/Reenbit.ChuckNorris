@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS
+﻿namespace Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS
 {
     public class SignInCredentialsDto
     {
