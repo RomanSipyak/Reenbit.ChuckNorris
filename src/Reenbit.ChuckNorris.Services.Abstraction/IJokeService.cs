@@ -20,6 +20,8 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 
         Task<JokeDto> CreateNewJokeAsync(CreateJokeDto jokeDto);
 
+        Task<JokeDto> UpdateNewJokeAsync(UpdateJokeDto jokeDto);
+
         Task<bool> AddJokeToFavoriteAsync(int favoriteJokeId, string userId);
 
         Task<bool> DeleteJokeFromFavoriteAsync(int favoriteJokeId, string userId);

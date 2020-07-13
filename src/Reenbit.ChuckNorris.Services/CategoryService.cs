@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.Services
 {
-    class CategoryService : ICategoryService
+    public class CategoryService : ICategoryService
     {
         private readonly IUnitOfWorkFactory unitOfWorkFactory;
 

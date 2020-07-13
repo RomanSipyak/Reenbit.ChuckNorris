@@ -21,5 +21,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
         public Expression<Func<Joke, JokeDto>> JokeToJokeDtoSelector();
 
         public void RemoveJoke(Joke joke);
+
+        public Task UpdateJokeCategoriesAsync(int jokeId, ICollection<int> categories);
     }
 }

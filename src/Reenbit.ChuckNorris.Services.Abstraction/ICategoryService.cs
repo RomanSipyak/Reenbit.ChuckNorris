@@ -12,6 +12,6 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 
         Task<CategoryDTO> CreateNewCategoryAsync(CreateCategoryDTO categoryDTO);
 
-        Task DeleteCategoryAsync(int categoryId)
+        Task DeleteCategoryAsync(int categoryId);
     }
 }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -90,6 +91,21 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             {
                 this.DbContext.Set<UserFavorite>().RemoveRange(userFavorites);
             }
+        }
+
+        public async Task UpdateJokeCategoriesAsync(int jokeId, ICollection<int> categories)
+        {
+            var intersectJokesKategories = await this.DbContext.Set<JokeCategory>().AsQueryable()
+                .Where(jc => jc.JokeId == jokeId && categories.Any(c => c == jc.CategoryId)).ToListAsync();
+            var leftSetJokeCategories = await this.DbContext.Set<JokeCategory>().AsQueryable()
+                .Where(jc => jc.JokeId == jokeId && categories.All(c => c != jc.CategoryId)).ToListAsync();
+            var rightSetJokeCategoriesIds = categories
+                .Except(intersectJokesKategories.Select(jc => jc.CategoryId))
+                .Except(leftSetJokeCategories.Select(jc => jc.CategoryId))
+                .Select(c => new JokeCategory { CategoryId = c, JokeId = jokeId}).ToList();
+            this.DbContext.Set<JokeCategory>().RemoveRange(leftSetJokeCategories);
+            this.DbContext.Set<JokeCategory>().AddRange(rightSetJokeCategoriesIds);
+            intersectJokesKategories.AddRange(rightSetJokeCategoriesIds);
         }
     }
 }

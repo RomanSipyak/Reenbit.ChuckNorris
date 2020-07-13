@@ -115,10 +115,10 @@ namespace Reenbit.ChuckNorris.API.Controllers
         }
 
         [HttpPut]
-        [Route("{jokeId}")]
-        public async Task<IActionResult> UpdateJoke([FromRoute]int jokeId)
+        public async Task<IActionResult> UpdateJoke(UpdateJokeDto updateJokeDto)
         {
-            return null;
+            var jokeDto = await this.jokeService.UpdateNewJokeAsync(updateJokeDto);
+            return Ok(jokeDto);
         }
 
         [HttpDelete]

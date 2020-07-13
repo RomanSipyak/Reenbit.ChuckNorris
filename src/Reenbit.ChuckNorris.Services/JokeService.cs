@@ -208,6 +208,26 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
+        public async Task<JokeDto> UpdateNewJokeAsync(UpdateJokeDto jokeDto)
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                if (!await jokeRepository.AnyAsync(j => j.Id == jokeDto.Id))
+                {
+                    throw new ArgumentException($"Joke with Id = {jokeDto.Id} does't exist");
+                }
+
+                var joke = this.mapper.Map<Joke>(jokeDto);
+                joke.CreatedAt = await jokeRepository.FindByKeyAndMapAsync(j => j.Id == joke.Id, j => j.CreatedAt);
+                await jokeRepository.UpdateJokeCategoriesAsync(joke.Id, jokeDto.Categories);
+                jokeRepository.Update(joke);
+                var number = await uow.SaveChangesAsync();
+                JokeDto returnJokeDto = await jokeRepository.FindByKeyAndMapAsync(j => j.Id == jokeDto.Id, jokeRepository.JokeToJokeDtoSelector());
+                return returnJokeDto;
+            }
+        }
+
         private T GetRandomElement<T>(IEnumerable<T> collection)
         {
             return collection.ElementAt(random.Next(collection.Count()));
