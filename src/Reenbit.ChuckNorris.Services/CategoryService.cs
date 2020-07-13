@@ -29,7 +29,6 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
-
                 return await categoryRepository.FindAndMapAsync(c => c.Title);
             }
         }

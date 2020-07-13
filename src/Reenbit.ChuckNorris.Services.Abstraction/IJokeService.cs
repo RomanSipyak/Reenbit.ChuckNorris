@@ -17,14 +17,14 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
         Task<JokeDto> CreateNewJokeAsync(CreateJokeDto jokeDto);
 
         Task AddJokeToFavoriteAsync(int favoriteJokeId, int userId);
-        Task<JokeDto> UpdateNewJokeAsync(UpdateJokeDto jokeDto);
 
+        Task<JokeDto> UpdateNewJokeAsync(UpdateJokeDto jokeDto);
 
         Task DeleteJokeFromFavoriteAsync(int favoriteJokeId, int userId);
 
         Task<ICollection<JokeDto>> GetFavoriteJokesForUserAsync(int userId);
-        Task DeleteJokeAsync(int jokeId);
 
+        Task DeleteJokeAsync(int jokeId);
 
         Task<ICollection<JokeDto>> GetTopFavoriteJokesForUserAsync(int userid);
     }
