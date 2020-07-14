@@ -36,6 +36,28 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
 
+        public async Task<ICollection<JokeDto>> GetFavoritesJokesTopAsync(int topNumber)
+        {
+            var list = await this.DbContext.Set<UserFavorite>().AsQueryable()
+                  .GroupBy(uf => uf.JokeId)
+                  .OrderByDescending(g => g.Count())
+                  .Take(topNumber)
+                  .Select(g => g.Key)
+                  /* .Take(topNumber)*/
+                  /*.Select(g => g.ElementAt(0))*/
+                  /*.Select(JokeToJokeDtoSelector())*/
+                  .ToListAsync();
+            var result = this.DbContext.Set<Joke>().AsQueryable()
+           .Where(j => list.Contains(j.Id))
+           .Select(JokeToJokeDtoSelector()).ToList()
+           .OrderBy(jd => list.IndexOf(jd.Id))
+           .ToList();
+            return result;
+            /*   return await this.DbContext.Set<Joke>().AsQueryable()
+                               .Where(j => topIds.Any(Id => Id == j.Id))
+                               .Select(JokeToJokeDtoSelector()).ToListAsync();*/
+        }
+
         public async Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId)
         {
             return await this.DbContext.Set<UserFavorite>().AsQueryable()

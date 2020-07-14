@@ -140,5 +140,13 @@ namespace Reenbit.ChuckNorris.API.Controllers
             await this.categoryService.DeleteCategoryAsync(categoryId);
             return Ok();
         }
+
+        [HttpGet]
+        [Route("favorite/top")]
+        public async Task<IActionResult> GetFavoriteJokes()
+        {
+            var jokes = await this.jokeService.GetTopFavoriteJokesAsync();
+            return Ok(jokes);
+        }
     }
 }
