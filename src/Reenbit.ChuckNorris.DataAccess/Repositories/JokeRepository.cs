@@ -43,9 +43,6 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                   .OrderByDescending(g => g.Count())
                   .Take(topNumber)
                   .Select(g => g.Key)
-                  /* .Take(topNumber)*/
-                  /*.Select(g => g.ElementAt(0))*/
-                  /*.Select(JokeToJokeDtoSelector())*/
                   .ToListAsync();
             var result = this.DbContext.Set<Joke>().AsQueryable()
            .Where(j => list.Contains(j.Id))
@@ -53,9 +50,6 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
            .OrderBy(jd => list.IndexOf(jd.Id))
            .ToList();
             return result;
-            /*   return await this.DbContext.Set<Joke>().AsQueryable()
-                               .Where(j => topIds.Any(Id => Id == j.Id))
-                               .Select(JokeToJokeDtoSelector()).ToListAsync();*/
         }
 
         public async Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId)
