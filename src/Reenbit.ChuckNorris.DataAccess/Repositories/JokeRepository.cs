@@ -39,16 +39,16 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
         public async Task<ICollection<JokeDto>> GetFavoritesJokesTopAsync(int topNumber)
         {
             var list = await this.DbContext.Set<UserFavorite>().AsQueryable()
-                  .GroupBy(uf => uf.JokeId)
-                  .OrderByDescending(g => g.Count())
-                  .Take(topNumber)
-                  .Select(g => g.Key)
-                  .ToListAsync();
+                                                               .GroupBy(uf => uf.JokeId)
+                                                               .OrderByDescending(g => g.Count())
+                                                               .Take(topNumber)
+                                                               .Select(g => g.Key)
+                                                               .ToListAsync();
             var result = this.DbContext.Set<Joke>().AsQueryable()
-           .Where(j => list.Contains(j.Id))
-           .Select(JokeToJokeDtoSelector()).ToList()
-           .OrderBy(jd => list.IndexOf(jd.Id))
-           .ToList();
+                                                   .Where(j => list.Contains(j.Id))
+                                                   .Select(JokeToJokeDtoSelector()).ToList()
+                                                   .OrderBy(jd => list.IndexOf(jd.Id))
+                                                   .ToList();
             return result;
         }
 
