@@ -113,7 +113,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateJoke(UpdateJokeDto updateJokeDto)
         {
-            var jokeDto = await this.jokeService.UpdateNewJokeAsync(updateJokeDto);
+            var jokeDto = await this.jokeService.UpdateJokeAsync(updateJokeDto);
             return Ok(jokeDto);
         }
 
@@ -129,7 +129,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Route("categories")]
         public async Task<IActionResult> CreateCategory(CreateCategoryDTO createCategoryDTO)
         {
-            var categoryDto = await categoryService.CreateNewCategoryAsync(createCategoryDTO);
+            var categoryDto = await categoryService.CreateCategoryAsync(createCategoryDTO);
             return CreatedAtAction(nameof(CreateCategory), categoryDto);
         }
 

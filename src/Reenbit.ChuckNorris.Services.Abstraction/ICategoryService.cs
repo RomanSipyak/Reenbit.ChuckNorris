@@ -10,7 +10,7 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
     {
         Task<ICollection<string>> GetAllCategoriesAsync();
 
-        Task<CategoryDTO> CreateNewCategoryAsync(CreateCategoryDTO categoryDTO);
+        Task<CategoryDTO> CreateCategoryAsync(CreateCategoryDTO categoryDTO);
 
         Task DeleteCategoryAsync(int categoryId);
     }

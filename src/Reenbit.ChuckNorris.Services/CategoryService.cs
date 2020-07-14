@@ -33,7 +33,7 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<CategoryDTO> CreateNewCategoryAsync(CreateCategoryDTO categoryDTO)
+        public async Task<CategoryDTO> CreateCategoryAsync(CreateCategoryDTO categoryDTO)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -46,8 +46,8 @@ namespace Reenbit.ChuckNorris.Services
                 Category category = mapper.Map<Category>(categoryDTO);
                 categoryRepository.Add(category);
                 await uow.SaveChangesAsync();
-                var returnCategory = mapper.Map<CategoryDTO>(category);
-                return returnCategory;
+                var categoryDto = mapper.Map<CategoryDTO>(category);
+                return categoryDto;
             }
         }
 

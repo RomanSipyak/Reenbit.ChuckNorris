@@ -210,7 +210,7 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<JokeDto> UpdateNewJokeAsync(UpdateJokeDto jokeDto)
+        public async Task<JokeDto> UpdateJokeAsync(UpdateJokeDto jokeDto)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
