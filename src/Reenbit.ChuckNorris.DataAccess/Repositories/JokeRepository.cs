@@ -54,7 +54,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                                             CreatedAt = j.CreatedAt,
                                             UpdatedAt = j.UpdatedAt,
                                             Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList(),
-                                        })).Take(5).ToListAsync();
+                                        })).Take(topNumber).ToListAsync();
             return favoriteJokes;
         }
 
