@@ -27,6 +27,10 @@ namespace Reenbit.ChuckNorris.Services
 
         private const int MinQueryLength = 3;
 
+        private const int TopFiveFavoriteJokes = 5;
+
+        private const int TopThreeFavoriteJokes = 3;
+
         public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
@@ -214,7 +218,7 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var favoriteJokes = await jokeRepository.FindUserFavoritesJokesTopAsync(userId, 3);
+                var favoriteJokes = await jokeRepository.FindUserFavoritesJokesTopAsync(userId, TopThreeFavoriteJokes);
                 return favoriteJokes;
             }
         }
@@ -224,30 +228,10 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var favoriteJokes = await jokeRepository.GetFavoritesJokesTopAsync(5);
+                var favoriteJokes = await jokeRepository.GetFavoritesJokesTopAsync(TopFiveFavoriteJokes);
                 return favoriteJokes;
             }
         }
-
-        /*public async Task<JokeDto> UpdateJokeAsync(UpdateJokeDto jokeDto)
-        {
-            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
-            {
-                var jokeRepository = uow.GetRepository<IJokeRepository>();
-                if (!await jokeRepository.AnyAsync(j => j.Id == jokeDto.Id))
-                {
-                    throw new ArgumentException($"Joke with Id = {jokeDto.Id} does't exist");
-                }
-
-                var joke = this.mapper.Map<Joke>(jokeDto);
-                joke.CreatedAt = await jokeRepository.FindByKeyAndMapAsync(j => j.Id == joke.Id, j => j.CreatedAt);
-                await jokeRepository.UpdateJokeCategoriesAsync(joke.Id, jokeDto.Categories);
-                jokeRepository.Update(joke);
-                var number = await uow.SaveChangesAsync();
-                JokeDto returnJokeDto = await jokeRepository.FindByKeyAndMapAsync(j => j.Id == jokeDto.Id, jokeRepository.JokeToJokeDtoSelector());
-                return returnJokeDto;
-            }
-        }*/
 
         public async Task<JokeDto> UpdateJokeAsync(UpdateJokeDto jokeDto)
         {
@@ -264,15 +248,11 @@ namespace Reenbit.ChuckNorris.Services
                     throw new ArgumentException($"Joke with Id = {jokeDto.Id} does't exist");
                 }
 
-                //var joke = this.mapper.Map<Joke>(jokeDto);
                 joke.Value = jokeDto.Value;
-
                 await jokeRepository.UpdateJokeCategoriesAsync(joke, jokeDto.Categories);
                 jokeRepository.Update(joke);
-                /*var number = */await uow.SaveChangesAsync();
-
+                await uow.SaveChangesAsync();
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
-                /*JokeDto returnJokeDto = await jokeRepository.FindByKeyAndMapAsync(j => j.Id == jokeDto.Id, jokeRepository.JokeToJokeDtoSelector());*/
                 JokeDto returnJokeDto = this.mapper.Map<JokeDto>(joke);
                 returnJokeDto.Categories = (await categoryRepository.FindAndMapAsync(c => c.Title, c => c.JokeCategories.Any(jc => jc.JokeId == joke.Id))).ToList();
                 return returnJokeDto;
