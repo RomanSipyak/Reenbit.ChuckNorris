@@ -88,49 +88,66 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             };
         }
 
-        public void RemoveJoke(Joke joke)
+        /* public void RemoveJoke(Joke joke)
+         {
+             if (joke != null)
+             {
+               *//*  RemoveLinkedJokeCategories(joke);
+                 RemoveLinkedUserFavorites(joke);*//*
+                 this.Remove(joke);
+             }
+         }*/
+
+        public void RemoveLinkedJokeCategories(ICollection<JokeCategory> jokeCategories)
         {
-            if (joke != null)
-            {
-                RemoveLinkedJokeCategories(joke);
-                RemoveLinkedUserFavorites(joke);
-                this.Remove(joke);
-            }
+            /* var jokeCategories = this.DbContext.Set<JokeCategory>().AsQueryable().Where(jc => jc.JokeId == joke.Id);
+             if (jokeCategories.Count() != 0)
+             {*/
+            this.DbContext.Set<JokeCategory>().RemoveRange(jokeCategories);
+            /* }*/
         }
 
-        private void RemoveLinkedJokeCategories(Joke joke)
+        public void RemoveLinkedUserFavorites(ICollection<UserFavorite> userFavorites)
         {
-            var jokeCategories = this.DbContext.Set<JokeCategory>().AsQueryable().Where(jc => jc.JokeId == joke.Id);
-            if (jokeCategories.Count() != 0)
-            {
-                this.DbContext.Set<JokeCategory>().RemoveRange(jokeCategories);
-            }
-        }
-
-        private void RemoveLinkedUserFavorites(Joke joke)
-        {
-            var userFavorites = this.DbContext.Set<UserFavorite>().AsQueryable().Where(jc => jc.JokeId == joke.Id);
-            if (userFavorites.Count() != 0)
-            {
-                this.DbContext.Set<UserFavorite>().RemoveRange(userFavorites);
-            }
+            /* var userFavorites = this.DbContext.Set<UserFavorite>().AsQueryable().Where(jc => jc.JokeId == joke.Id);
+             if (userFavorites.Count() != 0)
+             {*/
+            this.DbContext.Set<UserFavorite>().RemoveRange(userFavorites);
+            /* }*/
         }
 
         public async Task UpdateJokeCategoriesAsync(int jokeId, ICollection<int> categories)
         {
-            var intersectJokesCategories = await this.DbContext.Set<JokeCategory>().AsQueryable()
+            var commonJokesCategories = await this.DbContext.Set<JokeCategory>().AsQueryable()
                 .Where(jc => jc.JokeId == jokeId && categories.Any(c => c == jc.CategoryId)).ToListAsync();
-            var leftSetJokeCategories = await this.DbContext.Set<JokeCategory>().AsQueryable()
+            var jokeCategoriesForDelete = await this.DbContext.Set<JokeCategory>().AsQueryable()
                 .Where(jc => jc.JokeId == jokeId && categories.All(c => c != jc.CategoryId)).ToListAsync();
-            var rightSetJokeCategoriesIds = categories
-                .Except(intersectJokesCategories.Select(jc => jc.CategoryId))
-                .Except(leftSetJokeCategories.Select(jc => jc.CategoryId));
+            var jokeCategoriesForCreate = categories
+                .Except(commonJokesCategories.Select(jc => jc.CategoryId))
+                .Except(jokeCategoriesForDelete.Select(jc => jc.CategoryId));
             var rightSetJokeCategories = await this.DbContext.Set<Category>().AsQueryable()
-                .Where(c => rightSetJokeCategoriesIds.Any(ci => ci == c.Id))
+                .Where(c => jokeCategoriesForCreate.Any(ci => ci == c.Id))
                 .Select(c => new JokeCategory { CategoryId = c.Id, JokeId = jokeId }).ToListAsync();
-            this.DbContext.Set<JokeCategory>().RemoveRange(leftSetJokeCategories);
+            this.DbContext.Set<JokeCategory>().RemoveRange(jokeCategoriesForDelete);
             this.DbContext.Set<JokeCategory>().AddRange(rightSetJokeCategories);
-            intersectJokesCategories.AddRange(rightSetJokeCategories);
+            commonJokesCategories.AddRange(rightSetJokeCategories);
+        }
+
+        public async Task UpdateJokeCategoriesAsync(Joke joke, ICollection<int> categories)
+        {
+            var commonJokesCategories = joke.JokeCategories
+                .Where(jc => categories.Any(c => c == jc.CategoryId))
+                .ToList();
+            var jokeCategoriesForDelete = joke.JokeCategories
+                .Where(jc => categories.All(c => c != jc.CategoryId)).ToList();
+            var jokeCategoriesIdsForCreate = categories
+                .Except(commonJokesCategories.Select(jc => jc.CategoryId))
+                .Except(jokeCategoriesForDelete.Select(jc => jc.CategoryId));
+            var JokeCategoriesForAdding = await this.DbContext.Set<Category>().AsQueryable()
+                .Where(c => jokeCategoriesIdsForCreate.Any(ci => ci == c.Id))
+                .Select(c => new JokeCategory { CategoryId = c.Id, JokeId = joke.Id }).ToListAsync();
+            joke.JokeCategories = joke.JokeCategories.Except(jokeCategoriesForDelete).Union(JokeCategoriesForAdding).ToList();
+           // joke.JokeCategories.ToList().AddRange(JokeCategoriesForAdding);
         }
     }
 }

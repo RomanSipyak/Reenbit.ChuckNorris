@@ -7,6 +7,8 @@ using Reenbit.ChuckNorris.Domain.Entities;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,8 +58,21 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
-                var category = await categoryRepository.GetByIdAsync(categoryId);
-                categoryRepository.RemoveCategory(category);
+                var category = (await categoryRepository.FindAndMapAsync(c => c,
+                                                             c => c.Id == categoryId,
+                                                             null,
+                                                             new List<Expression<Func<Category, object>>> { j => j.JokeCategories }))
+                                                             .FirstOrDefault();
+                if (category != null)
+                {
+                    if (category.JokeCategories.Count != 0)
+                    {
+                        categoryRepository.RemoveLinkedJokeCategories(category.JokeCategories);
+                    }
+
+                    categoryRepository.Remove(category);
+                }
+
                 await uow.SaveChangesAsync();
             }
         }

@@ -1,5 +1,6 @@
 ﻿using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
 using Reenbit.ChuckNorris.Domain.Entities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Reenbit.ChuckNorris.DataAccess.Repositories
@@ -8,20 +9,20 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
     {
         public void RemoveCategory(Category category)
         {
-            if (category != null)
-            {
-                RemoveLinkedJokeCategories(category);
-                this.Remove(category);
-            }
+            /*  if (category != null)
+              {
+                  RemoveLinkedJokeCategories(category);*/
+            this.Remove(category);
+            /* }*/
         }
 
-        private void RemoveLinkedJokeCategories(Category category)
+        public void RemoveLinkedJokeCategories(ICollection<JokeCategory> jokeCategories)
         {
-            var jokeCategories = this.DbContext.Set<JokeCategory>().AsQueryable().Where(jc => jc.CategoryId == category.Id);
-            if (jokeCategories.Count() != 0)
-            {
-                this.DbContext.Set<JokeCategory>().RemoveRange(jokeCategories);
-            }
+            /*  var jokeCategories = this.DbContext.Set<JokeCategory>().AsQueryable().Where(jc => jc.CategoryId == category.Id);
+              if (jokeCategories.Count() != 0)
+              {*/
+            this.DbContext.Set<JokeCategory>().RemoveRange(jokeCategories);
+            /* }*/
         }
     }
 }

@@ -8,6 +8,7 @@ using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.Services
@@ -139,8 +140,26 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
-                var joke = await jokeRepository.GetByIdAsync(jokeId);
-                jokeRepository.RemoveJoke(joke);
+                var joke = (await jokeRepository.FindAndMapAsync(j => j,
+                                                                 j => j.Id == jokeId,
+                                                                 null,
+                                                                 new List<Expression<Func<Joke, object>>> { j => j.JokeCategories, j => j.UserFavorites }))
+                                                                 .FirstOrDefault();
+                if (joke != null)
+                {
+                    if (joke.JokeCategories.Count() != 0)
+                    {
+                        jokeRepository.RemoveLinkedJokeCategories(joke.JokeCategories);
+                    }
+
+                    if (joke.UserFavorites.Count() != 0)
+                    {
+                        jokeRepository.RemoveLinkedUserFavorites(joke.UserFavorites);
+                    }
+
+                    jokeRepository.Remove(joke);
+                }
+
                 await uow.SaveChangesAsync();
             }
         }
@@ -210,7 +229,7 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        public async Task<JokeDto> UpdateJokeAsync(UpdateJokeDto jokeDto)
+        /*public async Task<JokeDto> UpdateJokeAsync(UpdateJokeDto jokeDto)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -226,6 +245,36 @@ namespace Reenbit.ChuckNorris.Services
                 jokeRepository.Update(joke);
                 var number = await uow.SaveChangesAsync();
                 JokeDto returnJokeDto = await jokeRepository.FindByKeyAndMapAsync(j => j.Id == jokeDto.Id, jokeRepository.JokeToJokeDtoSelector());
+                return returnJokeDto;
+            }
+        }*/
+
+        public async Task<JokeDto> UpdateJokeAsync(UpdateJokeDto jokeDto)
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var jokeRepository = uow.GetRepository<IJokeRepository>();
+                var joke = (await jokeRepository.FindAndMapAsync(j => j,
+                                                                j => j.Id == jokeDto.Id,
+                                                                null,
+                                                                new List<Expression<Func<Joke, object>>> { j => j.JokeCategories}))
+                                                                .FirstOrDefault();
+                if (joke == null)
+                {
+                    throw new ArgumentException($"Joke with Id = {jokeDto.Id} does't exist");
+                }
+
+                //var joke = this.mapper.Map<Joke>(jokeDto);
+                joke.Value = jokeDto.Value;
+
+                await jokeRepository.UpdateJokeCategoriesAsync(joke, jokeDto.Categories);
+                jokeRepository.Update(joke);
+                /*var number = */await uow.SaveChangesAsync();
+
+                var categoryRepository = uow.GetRepository<ICategoryRepository>();
+                /*JokeDto returnJokeDto = await jokeRepository.FindByKeyAndMapAsync(j => j.Id == jokeDto.Id, jokeRepository.JokeToJokeDtoSelector());*/
+                JokeDto returnJokeDto = this.mapper.Map<JokeDto>(joke);
+                returnJokeDto.Categories = (await categoryRepository.FindAndMapAsync(c => c.Title, c => c.JokeCategories.Any(jc => jc.JokeId == joke.Id))).ToList();
                 return returnJokeDto;
             }
         }
