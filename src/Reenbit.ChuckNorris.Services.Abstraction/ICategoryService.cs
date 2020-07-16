@@ -8,7 +8,7 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 {
     public interface ICategoryService
     {
-        Task<ICollection<string>> GetAllCategoriesAsync();
+        Task<ICollection<CategoryDTO>> GetAllCategoriesAsync();
 
         Task<CategoryDTO> CreateCategoryAsync(CreateCategoryDTO categoryDTO);
 

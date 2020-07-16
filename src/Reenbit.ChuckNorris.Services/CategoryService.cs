@@ -26,12 +26,12 @@ namespace Reenbit.ChuckNorris.Services
             this.mapper = mapper;
         }
 
-        public async Task<ICollection<string>> GetAllCategoriesAsync()
+        public async Task<ICollection<CategoryDTO>> GetAllCategoriesAsync()
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
-                return await categoryRepository.FindAndMapAsync(c => c.Title);
+                return this.mapper.Map<ICollection<CategoryDTO>>(await categoryRepository.FindAndMapAsync(c => c));
             }
         }
 
