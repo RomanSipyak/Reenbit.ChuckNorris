@@ -40,7 +40,8 @@ namespace Reenbit.ChuckNorris.Services
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
-                if (await categoryRepository.AnyAsync(c => c.Title == categoryDTO.Title))
+                var exist = await categoryRepository.AnyAsync(c => c.Title == categoryDTO.Title);
+                if (exist)
                 {
                     throw new ArgumentException($"Category with {categoryDTO.Title} already exist");
                 }
