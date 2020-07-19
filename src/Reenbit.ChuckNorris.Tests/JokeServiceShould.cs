@@ -17,7 +17,8 @@ using Xunit.Sdk;
 
 namespace Reenbit.ChuckNorris.Tests
 {
-    public class JokeServiceShould : IClassFixture<BaseMocks>
+    [Collection("ShareCollection")]
+    public class JokeServiceShould
     {
         private readonly BaseMocks baseMocks;
 

@@ -21,7 +21,8 @@ using FluentAssertions;
 
 namespace Reenbit.ChuckNorris.Tests
 {
-    public class CategoriesServiceShoud : IClassFixture<BaseMocks>
+    [Collection("ShareCollection")]
+    public class CategoriesServiceShoud
     {
         private readonly BaseMocks baseMocks;
 
