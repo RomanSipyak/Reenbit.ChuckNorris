@@ -19,8 +19,6 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly IMapper mapper;
 
-        private readonly UserManager<User> userManager;
-
         private static readonly Random random = new Random();
 
         private const int MaxQueryLength = 120;
@@ -31,11 +29,10 @@ namespace Reenbit.ChuckNorris.Services
 
         private const int TopThreeFavoriteJokes = 3;
 
-        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager)
+        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.mapper = mapper;
-            this.userManager = userManager;
         }
 
         public async Task<JokeDto> GetRandomJokeAsync(string category)
