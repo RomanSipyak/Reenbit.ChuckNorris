@@ -17,8 +17,16 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 
         public Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(int userId, int topNumber);
 
+        public Task<ICollection<JokeDto>> GetFavoritesJokesTopAsync(int topNumber);
+
         public Expression<Func<Joke, JokeDto>> JokeToJokeDtoSelector();
 
-        Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId);
+        public void RemoveLinkedJokeCategories(ICollection<JokeCategory> jokeCategories);
+
+        public void RemoveLinkedUserFavorites(ICollection<UserFavorite> userFavorites);
+
+        public Task UpdateJokeCategoriesAsync(Joke joke, ICollection<int> categories);
+
+        public Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId);
     }
 }

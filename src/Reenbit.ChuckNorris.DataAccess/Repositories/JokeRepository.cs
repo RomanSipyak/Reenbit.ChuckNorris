@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
@@ -6,7 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Reenbit.ChuckNorris.DataAccess.Repositories
 {
@@ -33,6 +39,23 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 .Where(uf => uf.UserId == userId)
                 .OrderByDescending(uf => uf.CreatedAt).Take(topNumber)
                 .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
+        }
+
+        public async Task<ICollection<JokeDto>> GetFavoritesJokesTopAsync(int topNumber)
+        {
+            var favoriteJokes = await ((from j in this.DbContext.Set<Joke>().Include(j => j.UserFavorites)
+                                        orderby j.UserFavorites.Count() descending
+                                        select new JokeDto
+                                        {
+                                            Id = j.Id,
+                                            IconUrl = j.IconUrl,
+                                            Url = j.Url,
+                                            Value = j.Value,
+                                            CreatedAt = j.CreatedAt,
+                                            UpdatedAt = j.UpdatedAt,
+                                            Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList(),
+                                        })).Take(topNumber).ToListAsync();
+            return favoriteJokes;
         }
 
         public async Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId)
@@ -69,6 +92,32 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 UpdatedAt = uf.Joke.UpdatedAt,
                 Categories = uf.Joke.JokeCategories.Select(jc => jc.Category.Title).ToList()
             };
+        }
+
+        public void RemoveLinkedJokeCategories(ICollection<JokeCategory> jokeCategories)
+        {
+            this.DbContext.Set<JokeCategory>().RemoveRange(jokeCategories);
+        }
+
+        public void RemoveLinkedUserFavorites(ICollection<UserFavorite> userFavorites)
+        {
+            this.DbContext.Set<UserFavorite>().RemoveRange(userFavorites);
+        }
+
+        public async Task UpdateJokeCategoriesAsync(Joke joke, ICollection<int> categories)
+        {
+            var commonJokesCategories = joke.JokeCategories
+                .Where(jc => categories.Any(c => c == jc.CategoryId))
+                .ToList();
+            var jokeCategoriesForDelete = joke.JokeCategories
+                .Where(jc => categories.All(c => c != jc.CategoryId)).ToList();
+            var jokeCategoriesIdsForCreate = categories
+                .Except(commonJokesCategories.Select(jc => jc.CategoryId))
+                .Except(jokeCategoriesForDelete.Select(jc => jc.CategoryId));
+            var JokeCategoriesForAdding = await this.DbContext.Set<Category>().AsQueryable()
+                .Where(c => jokeCategoriesIdsForCreate.Any(ci => ci == c.Id))
+                .Select(c => new JokeCategory { CategoryId = c.Id, JokeId = joke.Id }).ToListAsync();
+            joke.JokeCategories = joke.JokeCategories.Except(jokeCategoriesForDelete).Union(JokeCategoriesForAdding).ToList();
         }
     }
 }
