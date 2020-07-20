@@ -53,6 +53,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> CreateJoke(CreateJokeDto createJokeDto)
         {
             var joke = await jokeService.CreateNewJokeAsync(createJokeDto);
@@ -70,7 +71,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpDelete]
         [Route("favorite/{favoriteJokeId}")]
-        [Authorize]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
         {
             await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId);

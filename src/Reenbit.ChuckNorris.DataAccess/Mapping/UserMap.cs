@@ -24,7 +24,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
                    .IsRequired();
 
             builder.HasMany(u => u.UserRoles)
-                   .WithOne()
+                   .WithOne(e => e.User)
                    .HasForeignKey(ur => ur.UserId)
                    .IsRequired();
 
