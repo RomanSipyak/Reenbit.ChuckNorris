@@ -17,5 +17,7 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.UserDTOS
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
+
+        public ICollection<string> Roles { get; set; } = new List<string>();
     }
 }
