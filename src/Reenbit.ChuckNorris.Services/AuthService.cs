@@ -72,6 +72,12 @@ namespace Reenbit.ChuckNorris.Services
 
             var newUser = this.mapper.Map<User>(userRegisterDto);
             var createdUser = await this.userManager.CreateAsync(newUser, userRegisterDto.Password);
+            if (userRegisterDto.Roles != null && userRegisterDto.Roles.Any())
+            {
+                //Can be invalid exception if role doesn't exist
+                await this.userManager.AddToRolesAsync(newUser, userRegisterDto.Roles);
+            }
+
             return createdUser.Succeeded;
         }
     }
