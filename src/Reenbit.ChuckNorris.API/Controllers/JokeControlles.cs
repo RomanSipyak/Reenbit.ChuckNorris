@@ -112,6 +112,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateJoke(UpdateJokeDto updateJokeDto)
         {
             var jokeDto = await this.jokeService.UpdateJokeAsync(updateJokeDto);
@@ -120,6 +121,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpDelete]
         [Route("{jokeId}")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteJoke([FromRoute]int jokeId)
         {
             await this.jokeService.DeleteJokeAsync(jokeId);
@@ -128,6 +130,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpPost]
         [Route("categories")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> CreateCategory(CreateCategoryDTO createCategoryDTO)
         {
             var categoryDto = await categoryService.CreateCategoryAsync(createCategoryDTO);
@@ -136,6 +139,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpDelete]
         [Route("categories/{categoryId}")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteCategory([FromRoute]int categoryId)
         {
             await this.categoryService.DeleteCategoryAsync(categoryId);
