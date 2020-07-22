@@ -19,6 +19,9 @@ namespace Reenbit.ChuckNorris.Services
 {
     public class MediaService : IMediaService
     {
+        private const int expiredTimeForWriteFileInTempStorage = 30;
+        private const int expiredTimeForReadFileInTempStorage = 360;
+        private const int startValidTimeForSas = -5;
         private readonly IOptions<AzureStorageBlobOptions> azureStorageBlobOptions;
 
         public MediaService(IOptions<AzureStorageBlobOptions> azureStorageBlobOptions)
@@ -26,7 +29,7 @@ namespace Reenbit.ChuckNorris.Services
             this.azureStorageBlobOptions = azureStorageBlobOptions;
         }
 
-        public string GenerateFeSasToken(string fileName)
+        public string GenerateSasTokenWithPermissioWriteInTemp(string fileName)
         {
 
             return GenerateSasToken(azureStorageBlobOptions.Value.FileTempPath, fileName);
@@ -35,7 +38,7 @@ namespace Reenbit.ChuckNorris.Services
 
         private string GenerateSasToken(string containerName, string fileName)
         {
-            return GenerateSasToken(containerName, DateTime.UtcNow.AddMinutes(30), fileName);
+            return GenerateSasToken(containerName, DateTime.UtcNow.AddMinutes(expiredTimeForWriteFileInTempStorage), fileName);
         }
 
         private string GenerateSasToken(string containerName, DateTime expiresOn, string fileName, string fileNameForRead = null)
@@ -46,7 +49,7 @@ namespace Reenbit.ChuckNorris.Services
             if (!string.IsNullOrEmpty(fileNameForRead))
             {
                 CloudBlockBlob blob = cloudBlobContainer.GetBlockBlobReference(fileNameForRead);
-                string getSasToken = GetSasForBlob(blob, 5);
+                string getSasToken = GetSasForBlob(blob, expiredTimeForReadFileInTempStorage);
                 return getSasToken;
             }
 
@@ -80,7 +83,7 @@ namespace Reenbit.ChuckNorris.Services
             {
                 Permissions = SharedAccessBlobPermissions.Read,
                 SharedAccessStartTime = DateTime.UtcNow.AddMinutes(-15),
-                SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(360),
+                SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(sasMinutesValid),
             });
             return string.Format(CultureInfo.InvariantCulture, "{0}{1}", blob.Uri, sasToken);
         }
