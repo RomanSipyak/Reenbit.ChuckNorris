@@ -31,6 +31,7 @@ namespace Reenbit.ChuckNorris.API.Extentions
             services.AddTransient<IJokeService, JokeService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IMediaService, MediaService>();
         }
 
         public static void RegisterDataAccess(this IServiceCollection services)
