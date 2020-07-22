@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
@@ -39,9 +40,7 @@ namespace Reenbit.ChuckNorris.Services
 
         private string GenerateSasToken(string containerName, DateTime expiresOn, string fileName, string fileNameForRead = null)
         {
-            var cloudStorageAccount = CloudStorageAccount.Parse(azureStorageBlobOptions.Value.ConnectionString);
-            var cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
-            var cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
+            CloudBlobContainer cloudBlobContainer = GetContainer(containerName);
             var permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write | SharedAccessBlobPermissions.Add;
 
             if (!string.IsNullOrEmpty(fileNameForRead))
@@ -67,6 +66,14 @@ namespace Reenbit.ChuckNorris.Services
             return fullBlobUrl;
         }
 
+        private CloudBlobContainer GetContainer(string containerName)
+        {
+            var cloudStorageAccount = CloudStorageAccount.Parse(azureStorageBlobOptions.Value.ConnectionString);
+            var cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+            var cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
+            return cloudBlobContainer;
+        }
+
         public static string GetSasForBlob(CloudBlockBlob blob, int sasMinutesValid)
         {
             var sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
@@ -77,6 +84,70 @@ namespace Reenbit.ChuckNorris.Services
             });
             return string.Format(CultureInfo.InvariantCulture, "{0}{1}", blob.Uri, sasToken);
         }
+
+        public async Task CopyImageFromTempToPermanentContainer(string sourceName, string destinationName)
+        {
+            CloudBlobContainer cloudBlobContainer = GetContainer(azureStorageBlobOptions.Value.FileTempPath);
+            CloudBlobContainer descBlobContainer = GetContainer(azureStorageBlobOptions.Value.FilePath);
+            await CopyBlockBlobAsync(cloudBlobContainer, descBlobContainer, sourceName, destinationName);
+        }
+
+
+        private static async Task CopyBlockBlobAsync(CloudBlobContainer container, CloudBlobContainer destinationCloudBlobContainer, string sourceName, string destinationName)
+        {
+            CloudBlockBlob sourceBlob = null;
+            CloudBlockBlob destBlob = null;
+            string leaseId = null;
+
+            try
+            {
+                // Get a block blob from the container to use as the source.
+                sourceBlob = container.GetBlockBlobReference(sourceName);
+
+                // Lease the source blob for the copy operation to prevent another client from modifying it.
+                // Specifying null for the lease interval creates an infinite lease.
+                leaseId = await sourceBlob.AcquireLeaseAsync(null);
+
+                // Get a reference to a destination blob (in this case, a new blob).
+                destBlob = destinationCloudBlobContainer.GetBlockBlobReference(destinationName);
+
+                // Ensure that the source blob exists.
+                if (await sourceBlob.ExistsAsync())
+                {
+                    // Get the ID of the copy operation.
+                    string copyId = await destBlob.StartCopyAsync(sourceBlob);
+
+                    // Fetch the destination blob's properties before checking the copy state.
+                    await destBlob.FetchAttributesAsync();
+
+                    Console.WriteLine("Status of copy operation: {0}", destBlob.CopyState.Status);
+                    Console.WriteLine("Completion time: {0}", destBlob.CopyState.CompletionTime);
+                    Console.WriteLine("Bytes copied: {0}", destBlob.CopyState.BytesCopied.ToString());
+                    Console.WriteLine("Total bytes: {0}", destBlob.CopyState.TotalBytes.ToString());
+                    Console.WriteLine();
+                }
+            }
+            catch (StorageException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadLine();
+                throw;
+            }
+            finally
+            {
+                // Break the lease on the source blob.
+                if (sourceBlob != null)
+                {
+                    await sourceBlob.FetchAttributesAsync();
+
+                    if (sourceBlob.Properties.LeaseState != LeaseState.Available)
+                    {
+                        await sourceBlob.BreakLeaseAsync(new TimeSpan(0));
+                    }
+                }
+            }
+        }
+
 
         /*  public void CreateStoredAccessPolicy(string policyName)
           {
