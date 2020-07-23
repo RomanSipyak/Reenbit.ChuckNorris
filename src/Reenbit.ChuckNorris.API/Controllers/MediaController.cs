@@ -24,7 +24,14 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Route("sas")]
         public async Task<IActionResult> GetSasKey([FromQuery] string fileName)
         {
-            return Ok(mediaService.GenerateFeSasToken(fileName));
+            return Ok(mediaService.GenerateSasTokenWithPermissioWriteInTemp(fileName));
+        }
+
+        [HttpGet]
+        [Route("copy")]
+        public async Task<IActionResult> Copy()
+        {
+            return Ok(mediaService.Copy());
         }
     }
 }

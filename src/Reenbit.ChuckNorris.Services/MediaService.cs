@@ -44,7 +44,7 @@ namespace Reenbit.ChuckNorris.Services
         private string GenerateSasToken(string containerName, DateTime expiresOn, string fileName, string fileNameForRead = null)
         {
             CloudBlobContainer cloudBlobContainer = GetContainer(containerName);
-            var permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write | SharedAccessBlobPermissions.Add;
+            var permissions = SharedAccessBlobPermissions.Write;
 
             if (!string.IsNullOrEmpty(fileNameForRead))
             {
@@ -55,7 +55,7 @@ namespace Reenbit.ChuckNorris.Services
 
             var shareAccessBlobPolicy = new SharedAccessBlobPolicy()
             {
-                SharedAccessStartTime = DateTime.UtcNow.AddMinutes(-5),
+                SharedAccessStartTime = DateTime.UtcNow.AddMinutes(startValidTimeForSas),
                 SharedAccessExpiryTime = expiresOn,
                 Permissions = permissions
             };
@@ -82,7 +82,7 @@ namespace Reenbit.ChuckNorris.Services
             var sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
             {
                 Permissions = SharedAccessBlobPermissions.Read,
-                SharedAccessStartTime = DateTime.UtcNow.AddMinutes(-15),
+                SharedAccessStartTime = DateTime.UtcNow.AddMinutes(startValidTimeForSas),
                 SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(sasMinutesValid),
             });
             return string.Format(CultureInfo.InvariantCulture, "{0}{1}", blob.Uri, sasToken);
