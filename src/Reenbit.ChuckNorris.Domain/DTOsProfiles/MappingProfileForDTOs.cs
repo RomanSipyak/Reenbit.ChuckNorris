@@ -10,7 +10,7 @@ namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
     {
         public MappingProfileForDTOs()
         {
-            CreateMap<Joke, JokeDto>().ReverseMap();
+            CreateMap<Joke, JokeDTO>().ReverseMap();
             CreateMap<CreateJokeDto, Joke>();
             CreateMap<UpdateJokeDto, Joke>();
             CreateMap<UserRegisterDto, User>().ForMember(desc => desc.UserName, opt => opt.MapFrom(src => src.Email));

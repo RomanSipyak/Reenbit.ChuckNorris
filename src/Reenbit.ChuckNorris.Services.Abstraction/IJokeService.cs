@@ -6,28 +6,28 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 {
     public interface IJokeService
     {
-        Task<JokeDto> GetRandomJokeAsync(string category);
+        Task<JokeDTO> GetRandomJokeAsync(string category);
 
-        Task<ICollection<JokeDto>> SearchJokesAsync(string query);
+        Task<ICollection<JokeDTO>> SearchJokesAsync(string query);
 
-        Task<ICollection<JokeDto>> GetAllJokesAsync();
+        Task<ICollection<JokeDTO>> GetAllJokesAsync();
 
-        Task<JokeDto> GetJokeAsync(int jokeId);
+        Task<JokeDTO> GetJokeAsync(int jokeId);
 
-        Task<JokeDto> CreateNewJokeAsync(CreateJokeDto jokeDto);
+        Task<JokeDTO> CreateNewJokeAsync(CreateJokeDto jokeDto);
 
         Task AddJokeToFavoriteAsync(int favoriteJokeId, int userId);
 
-        Task<JokeDto> UpdateJokeAsync(UpdateJokeDto jokeDto);
+        Task<JokeDTO> UpdateJokeAsync(UpdateJokeDto jokeDto);
 
         Task DeleteJokeFromFavoriteAsync(int favoriteJokeId, int userId);
 
-        Task<ICollection<JokeDto>> GetFavoriteJokesForUserAsync(int userId);
+        Task<ICollection<JokeDTO>> GetFavoriteJokesForUserAsync(int userId);
 
-        Task<ICollection<JokeDto>> GetTopFavoriteJokesAsync();
+        Task<ICollection<JokeDTO>> GetTopFavoriteJokesAsync();
 
         Task DeleteJokeAsync(int jokeId);
 
-        Task<ICollection<JokeDto>> GetTopFavoriteJokesForUserAsync(int userid);
+        Task<ICollection<JokeDTO>> GetTopFavoriteJokesForUserAsync(int userid);
     }
 }

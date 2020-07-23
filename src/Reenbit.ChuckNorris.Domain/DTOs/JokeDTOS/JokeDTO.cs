@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
 {
-    public class JokeDto
+    public class JokeDTO
     {
         public int Id { get; set; }
 
@@ -18,6 +18,6 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
 
         public ICollection<string> Categories { get; set; }
 
-        public ICollection<string> ImageUrls { get; set; }
+        public ICollection<string> ImagesUrls { get; set; }
     }
 }

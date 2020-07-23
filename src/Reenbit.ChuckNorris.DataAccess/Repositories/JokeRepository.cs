@@ -33,7 +33,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(filter).FirstAsync();
         }
 
-        public async Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(int userId, int topNumber)
+        public async Task<ICollection<JokeDTO>> FindUserFavoritesJokesTopAsync(int userId, int topNumber)
         {
             return await this.DbContext.Set<UserFavorite>().AsQueryable()
                 .Where(uf => uf.UserId == userId)
@@ -41,23 +41,23 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
 
-        public async Task<ICollection<JokeDto>> GetFavoritesJokesTopAsync(int topNumber)
+        public async Task<ICollection<JokeDTO>> GetFavoritesJokesTopAsync(int topNumber)
         {
             var favoriteJokes = await ((from j in this.DbContext.Set<Joke>().Include(j => j.UserFavorites)
                                         orderby j.UserFavorites.Count() descending
-                                        select new JokeDto
+                                        select new JokeDTO
                                         {
                                             Id = j.Id,
                                             Value = j.Value,
                                             CreatedAt = j.CreatedAt,
                                             UpdatedAt = j.UpdatedAt,
                                             Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList(),
-                                            ImageUrls = j.ImageUrls.Select(i => i.Value).ToList(),
+                                            ImagesUrls = j.Images.Select(i => i.Value).ToList(),
                                         })).Take(topNumber).ToListAsync();
             return favoriteJokes;
         }
 
-        public async Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId)
+        public async Task<ICollection<JokeDTO>> FindFavoriteJokesForUser(int userId)
         {
             return await this.DbContext.Set<UserFavorite>().AsQueryable()
                 .Where(uf => uf.UserId == userId)
@@ -65,29 +65,29 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
 
-        public Expression<Func<Joke, JokeDto>> JokeToJokeDtoSelector()
+        public Expression<Func<Joke, JokeDTO>> JokeToJokeDtoSelector()
         {
-            return j => new JokeDto
+            return j => new JokeDTO
             {
                 Id = j.Id,
                 Value = j.Value,
                 CreatedAt = j.CreatedAt,
                 UpdatedAt = j.UpdatedAt,
                 Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList(),
-                ImageUrls = j.ImageUrls.Select(i => i.Value).ToList()
+                ImagesUrls = j.Images.Select(i => i.Value).ToList()
             };
         }
 
-        private Expression<Func<UserFavorite, JokeDto>> UserFavoriteToJokeDtoSelector()
+        private Expression<Func<UserFavorite, JokeDTO>> UserFavoriteToJokeDtoSelector()
         {
-            return uf => new JokeDto
+            return uf => new JokeDTO
             {
                 Id = uf.Joke.Id,
                 Value = uf.Joke.Value,
                 CreatedAt = uf.Joke.CreatedAt,
                 UpdatedAt = uf.Joke.UpdatedAt,
                 Categories = uf.Joke.JokeCategories.Select(jc => jc.Category.Title).ToList(),
-                ImageUrls = uf.Joke.ImageUrls.Select(i => i.Value).ToList()
+                ImagesUrls = uf.Joke.Images.Select(i => i.Value).ToList()
             };
         }
 

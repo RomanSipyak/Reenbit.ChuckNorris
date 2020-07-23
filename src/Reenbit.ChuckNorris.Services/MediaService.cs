@@ -115,8 +115,6 @@ namespace Reenbit.ChuckNorris.Services
         {
             CloudBlockBlob sourceBlob = null;
             CloudBlockBlob destBlob = null;
-           
-
             try
             {
                 // Get a block blob from the container to use as the source.
