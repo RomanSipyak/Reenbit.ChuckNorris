@@ -8,10 +8,6 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
         [Required]
         public string Value { get; set; }
 
-        public string Url { get; set; }
-       
-        public string IconUrl { get; set; }
-
         public ICollection<int> Categories { get; set; } = new List<int>();
     }
 }
