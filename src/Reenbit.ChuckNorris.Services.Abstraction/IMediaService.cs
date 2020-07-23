@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Reenbit.ChuckNorris.Domain.DTOs.ImageDTOS;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 {
     public interface IMediaService
     {
-        string GenerateSasTokenWithPermissioWriteInTemp(string fileName);
-        Task CopyImageFromTempToPermanentContainer(string sourceName, string destinationName);
+        UploadImageDto GenerateSasTokenWithPermissioWriteInTemp(string fileName);
+        Task<string> CopyImageFromTempToPermanentContainer(string sourceName, string destinationName);
     }
 }

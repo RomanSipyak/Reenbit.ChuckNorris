@@ -17,5 +17,7 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
         public DateTime UpdatedAt { get; set; }
 
         public ICollection<string> Categories { get; set; }
+
+        public ICollection<string> ImageUrls { get; set; }
     }
 }

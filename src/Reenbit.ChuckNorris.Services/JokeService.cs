@@ -21,6 +21,8 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly UserManager<User> userManager;
 
+        private readonly IMediaService mediaService;
+
         private static readonly Random random = new Random();
 
         private const int MaxQueryLength = 120;
@@ -31,11 +33,12 @@ namespace Reenbit.ChuckNorris.Services
 
         private const int TopThreeFavoriteJokes = 3;
 
-        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager)
+        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager, IMediaService mediaService)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.mapper = mapper;
             this.userManager = userManager;
+            this.mediaService = mediaService;
         }
 
         public async Task<JokeDto> GetRandomJokeAsync(string category)
@@ -133,8 +136,32 @@ namespace Reenbit.ChuckNorris.Services
                 jokeRepository.Add(joke);
                 joke.JokeCategories = categories.Select(c => new JokeCategory() { Category = c, Joke = joke }).ToList();
                 await uow.SaveChangesAsync();
+                if (jokeDto.ImageNames.Count() != 0)
+                {
+                    foreach (var imageName in jokeDto.ImageNames)
+                    {
+                        if (string.IsNullOrWhiteSpace(imageName))
+                        {
+                            continue;
+                        }
+
+                        var imageStringUrl = await mediaService.CopyImageFromTempToPermanentContainer(imageName, $"{joke.Id}-{imageName}");
+                        if (!string.IsNullOrWhiteSpace(imageStringUrl))
+                        {
+                            ImageUrl imageUrl = new ImageUrl
+                            {
+                                JokeId = joke.Id,
+                                Value = imageStringUrl
+                            };
+                            joke.ImageUrls.Add(imageUrl);
+                        }
+                    }
+                }
+
+                await uow.SaveChangesAsync();
                 var returnJoke = mapper.Map<JokeDto>(joke);
                 returnJoke.Categories = joke.JokeCategories.Select(jc => jc.Category.Title).ToList();
+                returnJoke.ImageUrls = joke.ImageUrls.Select(i => i.Value).ToList();
                 return returnJoke;
             }
         }
@@ -241,7 +268,7 @@ namespace Reenbit.ChuckNorris.Services
                 var joke = (await jokeRepository.FindAndMapAsync(j => j,
                                                                 j => j.Id == jokeDto.Id,
                                                                 null,
-                                                                new List<Expression<Func<Joke, object>>> { j => j.JokeCategories}))
+                                                                new List<Expression<Func<Joke, object>>> { j => j.JokeCategories }))
                                                                 .FirstOrDefault();
                 if (joke == null)
                 {
