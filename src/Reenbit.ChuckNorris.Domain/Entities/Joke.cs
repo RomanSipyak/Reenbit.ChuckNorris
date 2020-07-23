@@ -15,5 +15,7 @@ namespace Reenbit.ChuckNorris.Domain.Entities
         public ICollection<JokeCategory> JokeCategories { get; set; } = new List<JokeCategory>();
 
         public virtual ICollection<UserFavorite> UserFavorites { get; set; } = new List<UserFavorite>();
+
+        public virtual ICollection<ImageUrl> ImageUrls { get; set; } = new List<ImageUrl>();
     }
 }

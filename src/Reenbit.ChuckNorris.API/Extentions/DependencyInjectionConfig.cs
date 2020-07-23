@@ -39,6 +39,7 @@ namespace Reenbit.ChuckNorris.API.Extentions
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
             services.AddScoped<IJokeRepository, JokeRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
         }
 
         public static void RegisterInfrastructure(this IServiceCollection services)
