@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 {
-    public interface IImageRepository : IRepository<ImageUrl, int>
+    public interface IImageRepository : IRepository<Image, int>
     {
     }
 }

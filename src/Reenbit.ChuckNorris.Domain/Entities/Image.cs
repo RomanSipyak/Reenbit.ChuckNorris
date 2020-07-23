@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.Domain.Entities
 {
-    public class ImageUrl
+    public class Image
     {
         public int Id { get; set; }
 

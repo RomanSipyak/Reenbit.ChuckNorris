@@ -148,7 +148,7 @@ namespace Reenbit.ChuckNorris.Services
                         var imageStringUrl = await mediaService.CopyImageFromTempToPermanentContainer(imageName, $"{joke.Id}-{imageName}");
                         if (!string.IsNullOrWhiteSpace(imageStringUrl))
                         {
-                            ImageUrl imageUrl = new ImageUrl
+                            Image imageUrl = new Image
                             {
                                 JokeId = joke.Id,
                                 Value = imageStringUrl

@@ -115,7 +115,7 @@ namespace Reenbit.ChuckNorris.Services
         {
             CloudBlockBlob sourceBlob = null;
             CloudBlockBlob destBlob = null;
-            string leaseId = null;
+           
 
             try
             {
@@ -126,10 +126,6 @@ namespace Reenbit.ChuckNorris.Services
 
                     // Get a reference to a destination blob (in this case, a new blob).
                     destBlob = destinationCloudBlobContainer.GetBlockBlobReference(destinationName);
-
-                    // Lease the source blob for the copy operation to prevent another client from modifying it.
-                    // Specifying null for the lease interval creates an infinite lease.
-                    leaseId = await sourceBlob.AcquireLeaseAsync(null);
 
                     // Get the ID of the copy operation.
                     string copyId = await destBlob.StartCopyAsync(sourceBlob);
@@ -148,15 +144,9 @@ namespace Reenbit.ChuckNorris.Services
             }
             finally
             {
-                // Break the lease on the source blob.
                 if (sourceBlob != null)
                 {
                     await sourceBlob.FetchAttributesAsync();
-
-                    if (sourceBlob.Properties.LeaseState != LeaseState.Available)
-                    {
-                        await sourceBlob.BreakLeaseAsync(new TimeSpan(0));
-                    }
                 }
             }
         }

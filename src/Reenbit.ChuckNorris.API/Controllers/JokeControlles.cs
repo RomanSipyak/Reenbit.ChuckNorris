@@ -139,7 +139,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [HttpPost]
         [Route("categories")]
         [Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> CreateCategory(CreateCategoryDTO createCategoryDTO)
+        public async Task<IActionResult> CreateCategory(CreateCategoryDto createCategoryDTO)
         {
             var categoryDto = await categoryService.CreateCategoryAsync(createCategoryDTO);
             return CreatedAtAction(nameof(CreateCategory), categoryDto);

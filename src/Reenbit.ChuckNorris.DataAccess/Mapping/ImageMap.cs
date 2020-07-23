@@ -7,11 +7,11 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Mapping
 {
-    class ImageUrlMap : IEntityTypeConfiguration<ImageUrl>
+    class ImageMap : IEntityTypeConfiguration<Image>
     {
-        public void Configure(EntityTypeBuilder<ImageUrl> builder)
+        public void Configure(EntityTypeBuilder<Image> builder)
         {
-            builder.ToTable("ImageUrls");
+            builder.ToTable("Images");
 
             builder.HasKey(i => i.Id);
 

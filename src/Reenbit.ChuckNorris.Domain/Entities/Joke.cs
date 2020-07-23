@@ -12,6 +12,6 @@ namespace Reenbit.ChuckNorris.Domain.Entities
 
         public virtual ICollection<UserFavorite> UserFavorites { get; set; } = new List<UserFavorite>();
 
-        public virtual ICollection<ImageUrl> ImageUrls { get; set; } = new List<ImageUrl>();
+        public virtual ICollection<Image> ImageUrls { get; set; } = new List<Image>();
     }
 }
