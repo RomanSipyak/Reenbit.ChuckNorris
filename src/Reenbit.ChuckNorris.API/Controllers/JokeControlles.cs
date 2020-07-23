@@ -52,6 +52,14 @@ namespace Reenbit.ChuckNorris.API.Controllers
             return Ok(categories);
         }
 
+        [HttpGet]
+        [Route("categories/exists")]
+        public async Task<IActionResult> CategoryExists([FromQuery] string categoryTitle)
+        {
+            var categories = await categoryService.CategoryExistsAsync(categoryTitle);
+            return Ok(categories);
+        }
+
         [HttpPost]
         [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> CreateJoke(CreateJokeDto createJokeDto)

@@ -53,6 +53,16 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
+        public async Task<bool> CategoryExistsAsync(string categoryTitle)
+        {
+            using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
+            {
+                var categoryRepository = uow.GetRepository<ICategoryRepository>();
+                var categoryExists =  await categoryRepository.AnyAsync(c => c.Title == categoryTitle);
+                return categoryExists;
+            }
+        }
+
         public async Task DeleteCategoryAsync(int categoryId)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
