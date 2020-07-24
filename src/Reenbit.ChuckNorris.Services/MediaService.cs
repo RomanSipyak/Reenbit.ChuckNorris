@@ -34,10 +34,10 @@ namespace Reenbit.ChuckNorris.Services
             this.azureStorageBlobOptions = azureStorageBlobOptions;
         }
 
-        public async Task<UploadImageDto> GenerateSasTokenWithPermissioWrite(string fileExtencion, string containerName)
+        public async Task<UploadImageDto> GenerateSasTokenWithPermissionWrite(string fileExtencion, string containerName)
         {
             var guid = Guid.NewGuid();
-            fileExtencion = $"{guid}.{fileExtencion}";
+            var fileName = $"{guid}.{fileExtencion}";
             CloudBlobContainer cloudBlobContainer = GetContainer(containerName);
             var permissions = SharedAccessBlobPermissions.Write;
             var shareAccessBlobPolicy = new SharedAccessBlobPolicy()
@@ -47,25 +47,14 @@ namespace Reenbit.ChuckNorris.Services
                 Permissions = permissions
             };
 
-            string uploadUrl = String.Format("{0}/{1}{2}", cloudBlobContainer.Uri, fileExtencion, cloudBlobContainer.GetSharedAccessSignature(shareAccessBlobPolicy, null));
+            string uploadUrl = String.Format("{0}/{1}{2}", cloudBlobContainer.Uri, fileName, cloudBlobContainer.GetSharedAccessSignature(shareAccessBlobPolicy, null));
             var uploadImageDto = new UploadImageDto
             {
-                ImageName = fileExtencion,
+                ImageName = fileName,
                 ImageUploadUrl = uploadUrl
             };
 
             return uploadImageDto;
-        }
-
-        private static string GetSasForBlob(CloudBlockBlob blob, int sasMinutesValid)
-        {
-            var sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
-            {
-                Permissions = SharedAccessBlobPermissions.Read,
-                SharedAccessStartTime = DateTime.UtcNow.AddMinutes(StartValidTimeForSas),
-                SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(sasMinutesValid),
-            });
-            return string.Format(CultureInfo.InvariantCulture, "{0}{1}", blob.Uri, sasToken);
         }
 
         public async Task<string> CopyFile(string sourceName, string destinationName, string containerSourceName, string containerDestinationName)
@@ -116,6 +105,18 @@ namespace Reenbit.ChuckNorris.Services
                 throw e;
             }
         }
+
+        private static string GetSasForBlob(CloudBlockBlob blob, int sasMinutesValid)
+        {
+            var sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
+            {
+                Permissions = SharedAccessBlobPermissions.Read,
+                SharedAccessStartTime = DateTime.UtcNow.AddMinutes(StartValidTimeForSas),
+                SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(sasMinutesValid),
+            });
+            return string.Format(CultureInfo.InvariantCulture, "{0}{1}", blob.Uri, sasToken);
+        }
+
     }
 }
 

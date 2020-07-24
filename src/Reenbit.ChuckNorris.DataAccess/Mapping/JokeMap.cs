@@ -26,9 +26,9 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
                    .IsRequired();
 
             builder.HasMany(j => j.JokeImages)
-                  .WithOne(i => i.Joke)
-                  .HasForeignKey(i => i.JokeId)
-                  .IsRequired();
+                   .WithOne(i => i.Joke)
+                   .HasForeignKey(i => i.JokeId)
+                   .IsRequired();
         }
     }
 }

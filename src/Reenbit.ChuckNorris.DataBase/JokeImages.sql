@@ -4,5 +4,5 @@
 	[Url] NVARCHAR(2048) NOT NULL,
 	[JokeId] INT NOT NULL,
 	CONSTRAINT [PK_JokeImages]  PRIMARY KEY CLUSTERED ([Id] ASC),
-	CONSTRAINT [FK_JokeImages_To_User] FOREIGN KEY ([JokeId]) REFERENCES Jokes([Id])
+	CONSTRAINT [FK_JokeImages_To_Joke] FOREIGN KEY ([JokeId]) REFERENCES Jokes([Id])
 )
