@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Storage.Blob;
+using Microsoft.Extensions.Options;
+using Reenbit.ChuckNorris.Domain.ConfigClasses;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.Collections.Generic;
@@ -15,16 +17,19 @@ namespace Reenbit.ChuckNorris.API.Controllers
     {
         private readonly IMediaService mediaService;
 
-        public MediaController(IMediaService mediaService)
+        private readonly IOptions<AzureStorageBlobOptions> azureStorageBlobOptions;
+
+        public MediaController(IMediaService mediaService, IOptions<AzureStorageBlobOptions> azureStorageBlobOptions)
         {
             this.mediaService = mediaService;
+            this.azureStorageBlobOptions = azureStorageBlobOptions;
         }
 
-        [HttpGet]
-        [Route("uploadSas")]
-        public async Task<IActionResult> GetSasKey([FromQuery] string fileName)
+        [HttpPost]
+        public async Task<IActionResult> GetSasKey([FromQuery] string fileExtencion)
         {
-            return Ok(mediaService.GenerateSasTokenWithPermissioWriteInTemp(fileName));
+            var uploadImageDto = await mediaService.GenerateSasTokenWithPermissioWrite(fileExtencion, azureStorageBlobOptions.Value.FileTempPath);
+            return CreatedAtAction(nameof(GetSasKey), uploadImageDto);
         }
     }
 }

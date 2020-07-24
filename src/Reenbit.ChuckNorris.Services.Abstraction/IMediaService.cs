@@ -9,7 +9,8 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 {
     public interface IMediaService
     {
-        UploadImageDto GenerateSasTokenWithPermissioWriteInTemp(string fileName);
-        Task<string> CopyImageFromTempToPermanentContainer(string sourceName, string destinationName);
+        Task<UploadImageDto> GenerateSasTokenWithPermissioWrite(string fileExtencion, string containerName);
+
+        Task<string> CopyFile(string sourceName, string destinationName, string containerSourceName, string containerDestinationName);
     }
 }

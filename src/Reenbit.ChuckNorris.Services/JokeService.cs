@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
+using Reenbit.ChuckNorris.Domain.ConfigClasses;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
 using Reenbit.ChuckNorris.Services.Abstraction;
@@ -33,12 +35,15 @@ namespace Reenbit.ChuckNorris.Services
 
         private const int TopThreeFavoriteJokes = 3;
 
-        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager, IMediaService mediaService)
+        private readonly IOptions<AzureStorageBlobOptions> azureStorageBlobOptions;
+
+        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager, IMediaService mediaService, IOptions<AzureStorageBlobOptions> azureStorageBlobOptions)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.mapper = mapper;
             this.userManager = userManager;
             this.mediaService = mediaService;
+            this.azureStorageBlobOptions = azureStorageBlobOptions;
         }
 
         public async Task<JokeDTO> GetRandomJokeAsync(string category)
@@ -136,33 +141,41 @@ namespace Reenbit.ChuckNorris.Services
                 jokeRepository.Add(joke);
                 joke.JokeCategories = categories.Select(c => new JokeCategory() { Category = c, Joke = joke }).ToList();
                 await uow.SaveChangesAsync();
-                if (jokeDto.ImageNames.Count() != 0)
-                {
-                    foreach (var imageName in jokeDto.ImageNames)
-                    {
-                        if (string.IsNullOrWhiteSpace(imageName))
-                        {
-                            continue;
-                        }
-
-                        var imageStringUrl = await mediaService.CopyImageFromTempToPermanentContainer(imageName, $"{joke.Id}-{imageName}");
-                        if (!string.IsNullOrWhiteSpace(imageStringUrl))
-                        {
-                            Image image = new Image
-                            {
-                                JokeId = joke.Id,
-                                Value = imageStringUrl
-                            };
-                            joke.Images.Add(image);
-                        }
-                    }
-                }
-
+                await AddImagesToJoke(jokeDto, joke);
                 await uow.SaveChangesAsync();
                 var returnJoke = mapper.Map<JokeDTO>(joke);
                 returnJoke.Categories = joke.JokeCategories.Select(jc => jc.Category.Title).ToList();
-                returnJoke.ImagesUrls = joke.Images.Select(i => i.Value).ToList();
+                returnJoke.ImageUrls = joke.JokeImages.Select(i => i.Url).ToList();
                 return returnJoke;
+            }
+        }
+
+        private async Task AddImagesToJoke(CreateJokeDto jokeDto, Joke joke)
+        {
+            if (jokeDto.ImageNames.Count() != 0)
+            {
+                foreach (var imageName in jokeDto.ImageNames)
+                {
+                    if (string.IsNullOrWhiteSpace(imageName))
+                    {
+                        continue;
+                    }
+
+                    var imageUrl = await mediaService.CopyFile(imageName,
+                                                               $"{joke.Id}-{imageName}",
+                                                               this.azureStorageBlobOptions.Value.FileTempPath,
+                                                               this.azureStorageBlobOptions.Value.FilePath);
+                    if (!string.IsNullOrWhiteSpace(imageUrl))
+                    {
+                        JokeImage image = new JokeImage
+                        {
+                            JokeId = joke.Id,
+                            Url = imageUrl
+                        };
+
+                        joke.JokeImages.Add(image);
+                    }
+                }
             }
         }
 

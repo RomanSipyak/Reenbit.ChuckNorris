@@ -18,6 +18,6 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
 
         public ICollection<string> Categories { get; set; }
 
-        public ICollection<string> ImagesUrls { get; set; }
+        public ICollection<string> ImageUrls { get; set; }
     }
 }
