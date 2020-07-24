@@ -79,7 +79,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpDelete]
         [Route("favorite/{favoriteJokeId}")]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize]
         public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
         {
             await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId);
