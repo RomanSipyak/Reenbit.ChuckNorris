@@ -7,15 +7,15 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Mapping
 {
-    class ImageMap : IEntityTypeConfiguration<Image>
+    class ImageMap : IEntityTypeConfiguration<JokeImage>
     {
-        public void Configure(EntityTypeBuilder<Image> builder)
+        public void Configure(EntityTypeBuilder<JokeImage> builder)
         {
-            builder.ToTable("Images");
+            builder.ToTable("JokeImages");
 
             builder.HasKey(i => i.Id);
 
-            builder.Property(i => i.Value)
+            builder.Property(i => i.Url)
                    .IsRequired()
                    .HasMaxLength(2048);
 

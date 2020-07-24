@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.DataAccess.Repositories
 {
-    public class ImageRepository : EntityFrameworkCoreRepository<Image, int>, IImageRepository
+    public class ImageRepository : EntityFrameworkCoreRepository<JokeImage, int>, IImageRepository
     {
     }
 }

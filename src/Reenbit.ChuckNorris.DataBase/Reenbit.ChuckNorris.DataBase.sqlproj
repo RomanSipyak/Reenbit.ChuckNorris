@@ -73,6 +73,6 @@
     <Build Include="UserFavorites.sql" />
     <PostDeploy Include="Scripts\Post-Deployment\PostDeployment.sql" />
     <None Include="Scripts\Post-Deployment\Roles.sql" />
-    <Build Include="Images.sql" />
+    <Build Include="JokeImages.sql" />
   </ItemGroup>
 </Project>

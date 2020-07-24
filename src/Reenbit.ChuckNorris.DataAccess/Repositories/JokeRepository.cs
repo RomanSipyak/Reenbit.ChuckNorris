@@ -52,7 +52,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                                             CreatedAt = j.CreatedAt,
                                             UpdatedAt = j.UpdatedAt,
                                             Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList(),
-                                            ImagesUrls = j.Images.Select(i => i.Value).ToList(),
+                                            ImageUrls = j.JokeImages.Select(i => i.Url).ToList(),
                                         })).Take(topNumber).ToListAsync();
             return favoriteJokes;
         }
@@ -74,7 +74,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 CreatedAt = j.CreatedAt,
                 UpdatedAt = j.UpdatedAt,
                 Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList(),
-                ImagesUrls = j.Images.Select(i => i.Value).ToList()
+                ImageUrls = j.JokeImages.Select(i => i.Url).ToList()
             };
         }
 
@@ -87,7 +87,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 CreatedAt = uf.Joke.CreatedAt,
                 UpdatedAt = uf.Joke.UpdatedAt,
                 Categories = uf.Joke.JokeCategories.Select(jc => jc.Category.Title).ToList(),
-                ImagesUrls = uf.Joke.Images.Select(i => i.Value).ToList()
+                ImageUrls = uf.Joke.JokeImages.Select(i => i.Url).ToList()
             };
         }
 

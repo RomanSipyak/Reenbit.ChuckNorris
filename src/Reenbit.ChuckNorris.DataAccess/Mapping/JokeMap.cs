@@ -25,7 +25,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
                    .HasForeignKey(uf => uf.JokeId)
                    .IsRequired();
 
-            builder.HasMany(j => j.Images)
+            builder.HasMany(j => j.JokeImages)
                   .WithOne(i => i.Joke)
                   .HasForeignKey(i => i.JokeId)
                   .IsRequired();
