@@ -5,6 +5,6 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 {
     public interface ICategoryRepository : IRepository<Category, int>
     {
-        public void RemoveLinkedJokeCategories(ICollection<JokeCategory> jokeCategories);
+        void RemoveLinkedJokeCategories(ICollection<JokeCategory> jokeCategories);
     }
 }

@@ -7,10 +7,10 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 {
     public interface IAuthService
     {
-        public Task<SignInUserDto> SignInAsync(SignInCredentialsDto signInCredentialsDto);
+        Task<SignInUserDto> SignInAsync(SignInCredentialsDto signInCredentialsDto);
 
-        public ClaimsIdentity GetIdentity(SignInUserDto signInUserDto);
+        ClaimsIdentity GetIdentity(SignInUserDto signInUserDto);
 
-        public Task<bool> RegisterUserAsync(UserRegisterDto userRegisterDto);
+        Task<bool> RegisterUserAsync(UserRegisterDto userRegisterDto);
     }
 }

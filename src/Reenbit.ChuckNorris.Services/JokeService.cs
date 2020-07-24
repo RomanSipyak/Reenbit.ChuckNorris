@@ -21,8 +21,6 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly IMapper mapper;
 
-        private readonly UserManager<User> userManager;
-
         private readonly IMediaService mediaService;
 
         private static readonly Random random = new Random();
@@ -37,11 +35,10 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly IOptions<AzureStorageBlobOptions> azureStorageBlobOptions;
 
-        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager, IMediaService mediaService, IOptions<AzureStorageBlobOptions> azureStorageBlobOptions)
+        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, IMediaService mediaService, IOptions<AzureStorageBlobOptions> azureStorageBlobOptions)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.mapper = mapper;
-            this.userManager = userManager;
             this.mediaService = mediaService;
             this.azureStorageBlobOptions = azureStorageBlobOptions;
         }

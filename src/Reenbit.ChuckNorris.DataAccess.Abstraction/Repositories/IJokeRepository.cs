@@ -9,24 +9,24 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 {
     public interface IJokeRepository : IRepository<Joke, int>
     {
-        public void AddUserFavorite(UserFavorite userFavorite);
+        void AddUserFavorite(UserFavorite userFavorite);
 
-        public void RemoveUserFavorite(UserFavorite userFavorite);
+        void RemoveUserFavorite(UserFavorite userFavorite);
 
-        public Task<UserFavorite> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter);
+        Task<UserFavorite> FindUserFavoriteAsync(Expression<Func<UserFavorite, bool>> filter);
 
-        public Task<ICollection<JokeDTO>> FindUserFavoritesJokesTopAsync(int userId, int topNumber);
+        Task<ICollection<JokeDTO>> FindUserFavoritesJokesTopAsync(int userId, int topNumber);
 
-        public Task<ICollection<JokeDTO>> GetFavoritesJokesTopAsync(int topNumber);
+        Task<ICollection<JokeDTO>> GetFavoritesJokesTopAsync(int topNumber);
 
-        public Expression<Func<Joke, JokeDTO>> JokeToJokeDtoSelector();
+        Expression<Func<Joke, JokeDTO>> JokeToJokeDtoSelector();
 
-        public void RemoveLinkedJokeCategories(ICollection<JokeCategory> jokeCategories);
+        void RemoveLinkedJokeCategories(ICollection<JokeCategory> jokeCategories);
 
-        public void RemoveLinkedUserFavorites(ICollection<UserFavorite> userFavorites);
+        void RemoveLinkedUserFavorites(ICollection<UserFavorite> userFavorites);
 
-        public Task UpdateJokeCategoriesAsync(Joke joke, ICollection<int> categories);
+        Task UpdateJokeCategoriesAsync(Joke joke, ICollection<int> categories);
 
-        public Task<ICollection<JokeDTO>> FindFavoriteJokesForUser(int userId);
+        Task<ICollection<JokeDTO>> FindFavoriteJokesForUser(int userId);
     }
 }

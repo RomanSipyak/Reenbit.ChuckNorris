@@ -23,8 +23,6 @@ namespace Reenbit.ChuckNorris.Services
     {
         private const int ExpiredTimeForWriteFileInTempStorage = 30;
 
-        private const int ExpiredTimeForReadFileInTempStorage = 360;
-
         private const int StartValidTimeForSas = -5;
 
         private readonly IOptions<AzureStorageBlobOptions> azureStorageBlobOptions;
@@ -116,7 +114,6 @@ namespace Reenbit.ChuckNorris.Services
             });
             return string.Format(CultureInfo.InvariantCulture, "{0}{1}", blob.Uri, sasToken);
         }
-
     }
 }
 
