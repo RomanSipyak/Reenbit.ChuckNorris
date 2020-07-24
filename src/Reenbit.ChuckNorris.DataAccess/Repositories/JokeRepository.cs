@@ -33,7 +33,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             return await this.DbContext.Set<UserFavorite>().AsQueryable().Where(filter).FirstAsync();
         }
 
-        public async Task<ICollection<JokeDTO>> FindUserFavoritesJokesTopAsync(int userId, int topNumber)
+        public async Task<ICollection<JokeDto>> FindUserFavoritesJokesTopAsync(int userId, int topNumber)
         {
             return await this.DbContext.Set<UserFavorite>().AsQueryable()
                 .Where(uf => uf.UserId == userId)
@@ -41,11 +41,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
 
-        public async Task<ICollection<JokeDTO>> GetFavoritesJokesTopAsync(int topNumber)
+        public async Task<ICollection<JokeDto>> GetFavoritesJokesTopAsync(int topNumber)
         {
             var favoriteJokes = await ((from j in this.DbContext.Set<Joke>().Include(j => j.UserFavorites)
                                         orderby j.UserFavorites.Count() descending
-                                        select new JokeDTO
+                                        select new JokeDto
                                         {
                                             Id = j.Id,
                                             Value = j.Value,
@@ -57,7 +57,7 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             return favoriteJokes;
         }
 
-        public async Task<ICollection<JokeDTO>> FindFavoriteJokesForUser(int userId)
+        public async Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId)
         {
             return await this.DbContext.Set<UserFavorite>().AsQueryable()
                 .Where(uf => uf.UserId == userId)
@@ -65,9 +65,9 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 .Select(UserFavoriteToJokeDtoSelector()).ToListAsync();
         }
 
-        public Expression<Func<Joke, JokeDTO>> JokeToJokeDtoSelector()
+        public Expression<Func<Joke, JokeDto>> JokeToJokeDtoSelector()
         {
-            return j => new JokeDTO
+            return j => new JokeDto
             {
                 Id = j.Id,
                 Value = j.Value,
@@ -78,9 +78,9 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             };
         }
 
-        private Expression<Func<UserFavorite, JokeDTO>> UserFavoriteToJokeDtoSelector()
+        private Expression<Func<UserFavorite, JokeDto>> UserFavoriteToJokeDtoSelector()
         {
-            return uf => new JokeDTO
+            return uf => new JokeDto
             {
                 Id = uf.Joke.Id,
                 Value = uf.Joke.Value,

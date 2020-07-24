@@ -50,14 +50,13 @@ namespace Reenbit.ChuckNorris.API.Extentions
         public static void AddIdetityConfig(this IServiceCollection services)
         {
             services.AddIdentity<User, Role>(options => options.Password = new PasswordOptions
-            {
-                RequireDigit = false,
-                RequiredLength = 6,
-                RequireLowercase = false,
-                RequireUppercase = false,
-                RequireNonAlphanumeric = false
-            }).AddEntityFrameworkStores<ReenbitChuckNorrisDbContext>()
-                                                          .AddDefaultTokenProviders();
+                                                        {
+                                                            RequireDigit = false,
+                                                            RequiredLength = 6,
+                                                            RequireLowercase = false,
+                                                            RequireUppercase = false,
+                                                            RequireNonAlphanumeric = false
+                                                        }).AddEntityFrameworkStores<ReenbitChuckNorrisDbContext>().AddDefaultTokenProviders();
         }
 
         public static void AddAzureStorageBlobOptions(this IServiceCollection services, IConfiguration configuration)
