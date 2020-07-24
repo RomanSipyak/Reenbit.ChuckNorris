@@ -1,8 +1,0 @@
-﻿CREATE TABLE [dbo].[Images]
-(
-	[Id] INT IDENTITY(1,1) NOT NULL,
-	[Value] NVARCHAR(2048) NOT NULL,
-	[JokeId] INT NOT NULL,
-	CONSTRAINT [FK_JokeImage_To_User] FOREIGN KEY ([JokeId]) REFERENCES Jokes([Id]),
-	CONSTRAINT [PK_Images]  PRIMARY KEY CLUSTERED ([Id] ASC)
-)
