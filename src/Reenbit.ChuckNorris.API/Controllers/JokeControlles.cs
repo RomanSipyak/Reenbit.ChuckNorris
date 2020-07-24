@@ -15,6 +15,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
     public class JokeControlles : BaseApiController
     {
         private readonly IJokeService jokeService;
+
         private readonly ICategoryService categoryService;
 
         public JokeControlles(IJokeService jokeService, ICategoryService categoryService)
