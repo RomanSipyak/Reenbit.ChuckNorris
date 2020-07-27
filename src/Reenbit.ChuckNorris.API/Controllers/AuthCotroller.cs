@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Reenbit.ChuckNorris.API.Authentication;
+using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Services.Abstraction;
@@ -54,6 +55,13 @@ namespace Reenbit.ChuckNorris.API.Controllers
         {
             bool result  = await this.authService.RegisterUserAsync(userRegisterDto);
             return Ok(result);
+        }
+
+        [HttpPost, AllowAnonymous]
+        [Route("resetPasswordRequest")]
+        public async Task<ActionResult<ActionExecutionResultDto>> ResetPasswordRequestAsync([FromBody] ResetPasswordRequestDto resetPasswordRequestDto)
+        {
+            return await authService.ResetPasswordRequestAsync(resetPasswordRequestDto);
         }
 
         private string GenerateToken(SignInUserDto user)

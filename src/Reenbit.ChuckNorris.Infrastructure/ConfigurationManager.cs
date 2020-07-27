@@ -8,6 +8,8 @@ namespace Reenbit.ChuckNorris.Infrastructure
 
         public string DatabaseConnectionString => GetConnectionStringValue("DatabaseConnectionString");
 
+        public string SiteUrl => this.configuration["SiteUrl"];
+
         public ConfigurationManager(IConfiguration configuration)
         {
             this.configuration = configuration;
