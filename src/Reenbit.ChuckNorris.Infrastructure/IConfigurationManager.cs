@@ -3,7 +3,5 @@
     public interface IConfigurationManager
     {
         string DatabaseConnectionString { get; }
-
-        string SiteUrl { get; }
     }
 }

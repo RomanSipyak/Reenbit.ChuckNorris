@@ -10,5 +10,8 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
+        public string ResetPageUrl { get; set; }
     }
 }

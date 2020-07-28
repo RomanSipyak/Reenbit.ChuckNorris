@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.Emails
 {
-    class EmailService
+    public class EmailService : IEmailService
     {
         private readonly ITemplateEngine templateEngine;
 
@@ -28,16 +28,16 @@ namespace Reenbit.ChuckNorris.Emails
             this.configurationManager = configurationManager;
         }
 
-        public Task SendRestorePasswordEmail(User user, string token)
+        public Task SendRestorePasswordEmail(User user, string token, string ResetPageUrl)
         {
             var emailDto = new EmailDto
             {
                 To = new List<string> { user.Email },
                 Subject = "Password Reset",
-                Template = EmailTemplates.resetPassword
+                Template = EmailTemplates.ResetPassword
             };
 
-            var resetPasswordUrl = GenerateRestoreUrl(user.Id, token);
+            var resetPasswordUrl = GenerateRestoreUrl(user.Id, token, ResetPageUrl);
             emailDto.DataModel = new ResetPasswordDto
             {
                 FirstName = user.FirstName,
@@ -55,10 +55,10 @@ namespace Reenbit.ChuckNorris.Emails
             await this.emailSender.Send(emailToSend);
         }
 
-        private string GenerateRestoreUrl(int userId, string token)
+        private string GenerateRestoreUrl(int userId, string token, string ResetPageUrl)
         {
             return QueryHelpers.AddQueryString(
-                $"{this.configurationManager.SiteUrl}/pwd-change",
+                ResetPageUrl,
                 new Dictionary<string, string>
                     {
                         { "userId", userId.ToString() },

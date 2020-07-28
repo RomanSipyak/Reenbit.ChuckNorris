@@ -8,6 +8,6 @@ namespace Reenbit.ChuckNorris.Emails.Abstractions
 {
     public interface IEmailService
     {
-        Task SendRestorePasswordEmail(User user, string token);
+        Task SendRestorePasswordEmail(User user, string token, string ResetPageUrl);
     }
 }

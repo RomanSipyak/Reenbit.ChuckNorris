@@ -63,6 +63,7 @@ namespace Reenbit.ChuckNorris.API
             });
 
             services.AddAzureStorageBlobOptions(Configuration);
+            services.AddEmailSettings(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

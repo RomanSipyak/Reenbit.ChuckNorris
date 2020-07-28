@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Reenbit.ChuckNorris.Domain.ConfigClasses;
+using Reenbit.ChuckNorris.Emails.Abstractions;
 using Reenbit.ChuckNorris.Emails.EmailDTOs;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.Emails
 {
-    public class EmailSender
+    public class EmailSender : IEmailSender
     {
         private readonly Regex mailRegex;
 
@@ -65,9 +66,9 @@ namespace Reenbit.ChuckNorris.Emails
 
             using (SmtpClient smtp = new SmtpClient(this.emailOptions.Value.MailServer, this.emailOptions.Value.MailPort))
             {
+                smtp.EnableSsl = true;
                 smtp.Credentials = new NetworkCredential(this.emailOptions.Value.SenderEmail,
                                                          this.emailOptions.Value.Password);
-                smtp.EnableSsl = true;
                 await smtp.SendMailAsync(message);
             }
 

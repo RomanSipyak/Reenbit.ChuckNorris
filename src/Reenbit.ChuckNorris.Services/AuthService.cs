@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
+using Reenbit.ChuckNorris.Emails.Abstractions;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,14 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly IMapper mapper;
 
-        public AuthService(SignInManager<User> signInManager, UserManager<User> userManager, IMapper mapper)
+        private readonly IEmailService emailService;
+
+        public AuthService(SignInManager<User> signInManager, UserManager<User> userManager, IMapper mapper, IEmailService emailService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.mapper = mapper;
+            this.emailService = emailService;
         }
 
         public async Task<SignInUserDto> SignInAsync(SignInCredentialsDto signInCredentialsDto)
@@ -79,6 +84,19 @@ namespace Reenbit.ChuckNorris.Services
             }
 
             return createdUser.Succeeded;
+        }
+
+        public async Task<ActionExecutionResultDto> ResetPasswordRequestAsync(ResetPasswordRequestDto resetPasswordRequest)
+        {   //????????????????/
+            var result = new ActionExecutionResultDto();
+            var user = await this.userManager.FindByEmailAsync(resetPasswordRequest.Email);
+            if (user != null)
+            {
+                var resetToken = await this.userManager.GeneratePasswordResetTokenAsync(user);
+                await this.emailService.SendRestorePasswordEmail(user, resetToken, resetPasswordRequest.ResetPageUrl);
+            }
+
+            return result;
         }
     }
 }

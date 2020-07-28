@@ -6,6 +6,6 @@ namespace Reenbit.ChuckNorris.Emails
 {
     public enum EmailTemplates
     {
-        resetPassword
+        ResetPassword
     }
 }
