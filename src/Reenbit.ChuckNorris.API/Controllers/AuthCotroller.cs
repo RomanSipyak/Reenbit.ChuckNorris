@@ -9,7 +9,9 @@ using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Reenbit.ChuckNorris.API.Controllers
 {
@@ -53,7 +55,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Route("signup")]
         public async Task<IActionResult> SignUp([FromBody]UserRegisterDto userRegisterDto)
         {
-            bool result  = await this.authService.RegisterUserAsync(userRegisterDto);
+            bool result = await this.authService.RegisterUserAsync(userRegisterDto);
             return Ok(result);
         }
 
@@ -61,7 +63,26 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Route("resetPasswordRequest")]
         public async Task<ActionResult<ActionExecutionResultDto>> ResetPasswordRequestAsync([FromBody] ResetPasswordRequestDto resetPasswordRequestDto)
         {
-            return await authService.ResetPasswordRequestAsync(resetPasswordRequestDto);
+            var result = await authService.ResetPasswordRequestAsync(resetPasswordRequestDto);
+            return result.Succeeded ? Ok() : throw new ArgumentException(result.Error);
+        }
+
+        [Route("verifyResetPasswordToken")]
+        [HttpGet, AllowAnonymous]
+        public async Task<ActionResult> VerifyResetPasswordToken([FromQuery]ValidateResetPasswordDto validateResetPasswordDto)
+        {
+            validateResetPasswordDto.Token = HttpUtility.UrlDecode(validateResetPasswordDto.Token);
+            var result = await this.authService.VerifyResetPasswordToken(validateResetPasswordDto);
+            return Ok(result);
+        }
+
+        [Route("changePassword")]
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> ChangePassword([FromBody]ResetPasswordDto resetPassword)
+        {
+            resetPassword.Token = HttpUtility.UrlDecode(resetPassword.Token);
+            var result = await this.authService.ChangePassword(resetPassword);
+            return result.Succeeded ? Ok(result) : throw new ArgumentException(result.Error);
         }
 
         private string GenerateToken(SignInUserDto user)
@@ -78,5 +99,5 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
             return encodedJwt;
         }
-    } 
+    }
 }

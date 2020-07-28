@@ -87,13 +87,53 @@ namespace Reenbit.ChuckNorris.Services
         }
 
         public async Task<ActionExecutionResultDto> ResetPasswordRequestAsync(ResetPasswordRequestDto resetPasswordRequest)
-        {   //????????????????/
+        {
             var result = new ActionExecutionResultDto();
             var user = await this.userManager.FindByEmailAsync(resetPasswordRequest.Email);
             if (user != null)
             {
                 var resetToken = await this.userManager.GeneratePasswordResetTokenAsync(user);
                 await this.emailService.SendRestorePasswordEmail(user, resetToken, resetPasswordRequest.ResetPageUrl);
+            }
+            else
+            {
+                result.Succeeded = false;
+                result.Error = "User was not found";
+            }
+
+            return result;
+        }
+
+        public async Task<ActionExecutionResultDto> ChangePassword(ResetPasswordDto resetPasswordDto)
+        {
+            var actionResult = new ActionExecutionResultDto();
+            var user = await this.userManager.FindByIdAsync(resetPasswordDto.UserId.ToString());
+            IdentityResult changePasswordResult = null;
+            if (user != null)
+            {
+                changePasswordResult = await this.userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.Password);
+            }
+
+            if (changePasswordResult == null || !changePasswordResult.Succeeded)
+            {
+                actionResult.Succeeded = false;
+                actionResult.Error = changePasswordResult?.Errors.Select(r => r.Description).FirstOrDefault() ?? "User was not found";
+            }
+
+            return actionResult;
+        }
+
+        public async Task<bool> VerifyResetPasswordToken(ValidateResetPasswordDto validateResetPasswordDto)
+        {
+            bool result = false;
+            var user = await this.userManager.FindByIdAsync(validateResetPasswordDto.UserId.ToString());
+            if (user != null)
+            {
+                result = await this.userManager.VerifyUserTokenAsync(
+                    user,
+                    this.userManager.Options.Tokens.PasswordResetTokenProvider,
+                    UserManager<User>.ResetPasswordTokenPurpose,
+                    validateResetPasswordDto.Token);
             }
 
             return result;

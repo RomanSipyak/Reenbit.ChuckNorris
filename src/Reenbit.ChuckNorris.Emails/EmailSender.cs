@@ -23,10 +23,9 @@ namespace Reenbit.ChuckNorris.Emails
         {
             this.emailOptions = emailOptions;
 
-            this.mailRegex = new Regex(
-                             @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))"
-                             + @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
-                             RegexOptions.IgnoreCase);
+            this.mailRegex = new Regex(@"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))"
+                                       + @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
+                                       RegexOptions.IgnoreCase);
         }
 
         public async Task<bool> Send(EmailDto emailDto)
@@ -49,17 +48,6 @@ namespace Reenbit.ChuckNorris.Emails
             }
 
             this.GetValidAddresses(addressesList).ForEach(message.To.Add);
-
-            if (emailDto.Cc != null)
-            {
-                emailDto.Cc.Select(x => new MailAddress(x)).ToList().ForEach(message.CC.Add);
-            }
-
-            if (emailDto.Bcc != null)
-            {
-                emailDto.Bcc.Select(x => new MailAddress(x)).ToList().ForEach(message.Bcc.Add);
-            }
-
             message.Subject = emailDto.Subject;
             message.From = new MailAddress(this.emailOptions.Value.SenderEmail);
             message.Body = emailDto.HtmlBody;

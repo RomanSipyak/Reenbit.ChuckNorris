@@ -38,7 +38,7 @@ namespace Reenbit.ChuckNorris.Emails
             };
 
             var resetPasswordUrl = GenerateRestoreUrl(user.Id, token, ResetPageUrl);
-            emailDto.DataModel = new ResetPasswordDto
+            emailDto.DataModel = new ResetDataDto
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,

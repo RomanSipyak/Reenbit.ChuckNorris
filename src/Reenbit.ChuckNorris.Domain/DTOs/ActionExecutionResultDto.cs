@@ -8,6 +8,6 @@ namespace Reenbit.ChuckNorris.Domain.DTOs
     {
         public bool Succeeded { get; set; } = true;
 
-        public string Errors { get; set; }
+        public string Error { get; set; }
     }
 }

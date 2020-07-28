@@ -13,10 +13,13 @@ namespace Reenbit.ChuckNorris.Emails
     public class TemplateEngine : ITemplateEngine
     {
         private const string TemplatesFolderName = "Templates";
+
         private const string MasterTemplateFileName = "Master";
+
         private const string ContentBodyPlaceholder = "{{ContentBody}}";
 
         private static readonly Regex tokenRegex = new Regex(@"\{\{\s*(?<token>\w+)\s*\}\}");
+
         private static readonly string assemblyFolder = Path.GetDirectoryName(typeof(TemplateEngine).Assembly.Location);
 
         public async Task<string> CompileAsync<T>(string templateName, T model)
@@ -28,11 +31,7 @@ namespace Reenbit.ChuckNorris.Emails
             }
 
             string templateText = await File.ReadAllTextAsync(templateFilePath);
-
-            // process inner template (changing part)
             templateText = ProcessPlaceholders(templateText, model);
-
-            // process html layout with inner content
             string masterFilePath = GetTemplateFilePath(MasterTemplateFileName);
             string masterText = await File.ReadAllTextAsync(masterFilePath);
             templateText = masterText.Replace(ContentBodyPlaceholder, templateText);
@@ -49,7 +48,6 @@ namespace Reenbit.ChuckNorris.Emails
 
             MatchCollection matches = tokenRegex.Matches(text);
             IEnumerable<string> tokens = matches.Cast<Match>().Select(m => m.Groups["token"].Value).Distinct();
-
             var publicProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var token in tokens)
             {

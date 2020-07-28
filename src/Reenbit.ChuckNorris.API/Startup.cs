@@ -47,11 +47,8 @@ namespace Reenbit.ChuckNorris.API
             var configurationManager = GetConfigurationManager(services);
             services.AddDbContext<ReenbitChuckNorrisDbContext>(options =>
                                                                options.UseSqlServer(configurationManager.DatabaseConnectionString));
-
-            services.AddIdetityConfig();
-
             services.AddJwtBearerConfig();
-
+            services.AddIdetityConfig();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CHUCKNORRIS API", Version = "v1" });

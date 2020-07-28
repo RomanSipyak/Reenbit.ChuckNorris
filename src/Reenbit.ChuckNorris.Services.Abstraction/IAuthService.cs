@@ -14,6 +14,10 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
 
         Task<bool> RegisterUserAsync(UserRegisterDto userRegisterDto);
 
-        Task<ActionExecutionResultDto> ResetPasswordRequestAsync(ResetPasswordRequestDto resetPasswordRequestDto); 
+        Task<ActionExecutionResultDto> ResetPasswordRequestAsync(ResetPasswordRequestDto resetPasswordRequestDto);
+
+        Task<ActionExecutionResultDto> ChangePassword(ResetPasswordDto resetPasswordDto);
+
+        Task<bool> VerifyResetPasswordToken(ValidateResetPasswordDto validateResetPasswordDto);
     }
 }

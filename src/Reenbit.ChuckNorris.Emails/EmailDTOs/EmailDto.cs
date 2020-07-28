@@ -8,10 +8,6 @@ namespace Reenbit.ChuckNorris.Emails.EmailDTOs
     {
         public IEnumerable<string> To { get; set; }
 
-        public IEnumerable<string> Cc { get; set; }
-
-        public IEnumerable<string> Bcc { get; set; }
-
         public string Subject { get; set; }
 
         public dynamic DataModel { get; set; }

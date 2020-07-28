@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Reenbit.ChuckNorris.Emails.EmailDTOs
 {
-    public class ResetPasswordDto
+    public class ResetDataDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
