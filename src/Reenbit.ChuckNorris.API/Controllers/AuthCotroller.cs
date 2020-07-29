@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Reenbit.ChuckNorris.API.Authentication;
 using Reenbit.ChuckNorris.Domain.DTOs;
@@ -28,11 +29,14 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         private readonly IWebHostEnvironment hostingEnvironment;
 
-        public AuthCotroller(IAuthService authService, IMapper mapper, IWebHostEnvironment hostingEnvironment)
+        private readonly ILogger<AuthCotroller> logger;
+
+        public AuthCotroller(IAuthService authService, IMapper mapper, IWebHostEnvironment hostingEnvironment, ILogger<AuthCotroller> logger)
         {
             this.authService = authService;
             this.mapper = mapper;
             this.hostingEnvironment = hostingEnvironment;
+            this.logger = logger;
         }
 
         [HttpPost, AllowAnonymous]
@@ -75,11 +79,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [HttpGet, AllowAnonymous]
         public async Task<ActionResult> VerifyResetPasswordToken([FromQuery]ValidateResetPasswordDto validateResetPasswordDto)
         {
-            if (hostingEnvironment.IsDevelopment())
-            {
-                validateResetPasswordDto.Token = HttpUtility.UrlDecode(validateResetPasswordDto.Token);
-            }
-
+            validateResetPasswordDto.Token = validateResetPasswordDto.Token.Replace(" ", "+");
             var result = await this.authService.VerifyResetPasswordToken(validateResetPasswordDto);
             return Ok(result);
         }
@@ -88,11 +88,6 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> ChangePassword([FromBody]ResetPasswordDto resetPasswordDto)
         {
-            if (hostingEnvironment.IsDevelopment())
-            {
-                resetPasswordDto.Token = HttpUtility.UrlDecode(resetPasswordDto.Token);
-            }
-
             var result = await this.authService.ChangePassword(resetPasswordDto);
             return result.Succeeded ? Ok(result) : (IActionResult)BadRequest(result.Error);
         }

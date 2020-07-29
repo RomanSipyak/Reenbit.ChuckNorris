@@ -39,6 +39,12 @@ namespace Reenbit.ChuckNorris.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.RegisterDependencies();
+            services.AddLogging(options =>
+            {
+                options.AddConsole();
+                options.SetMinimumLevel(LogLevel.Trace);
+            });
+
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
                                                                                           .AllowAnyMethod()
                                                                                           .AllowAnyHeader()));
