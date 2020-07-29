@@ -78,10 +78,10 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [Route("changePassword")]
         [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> ChangePassword([FromBody]ResetPasswordDto resetPassword)
+        public async Task<IActionResult> ChangePassword([FromBody]ResetPasswordDto resetPasswordDto)
         {
-            resetPassword.Token = HttpUtility.UrlDecode(resetPassword.Token);
-            var result = await this.authService.ChangePassword(resetPassword);
+            resetPasswordDto.Token = HttpUtility.UrlDecode(resetPasswordDto.Token);
+            var result = await this.authService.ChangePassword(resetPasswordDto);
             return result.Succeeded ? Ok(result) : throw new ArgumentException(result.Error);
         }
 
