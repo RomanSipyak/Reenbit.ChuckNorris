@@ -64,7 +64,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         public async Task<ActionResult<ActionExecutionResultDto>> ResetPasswordRequestAsync([FromBody] ResetPasswordRequestDto resetPasswordRequestDto)
         {
             var result = await authService.ResetPasswordRequestAsync(resetPasswordRequestDto);
-            return result.Succeeded ? Ok() : throw new ArgumentException(result.Error);
+            return result.Succeeded ? Ok() : (ActionResult)BadRequest(result.Error);
         }
 
         [Route("verifyResetPasswordToken")]
@@ -82,7 +82,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         {
             resetPasswordDto.Token = HttpUtility.UrlDecode(resetPasswordDto.Token);
             var result = await this.authService.ChangePassword(resetPasswordDto);
-            return result.Succeeded ? Ok(result) : throw new ArgumentException(result.Error);
+            return result.Succeeded ? Ok(result) : (IActionResult)BadRequest(result.Error);
         }
 
         private string GenerateToken(SignInUserDto user)
