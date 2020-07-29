@@ -32,11 +32,9 @@ namespace Reenbit.ChuckNorris.Services
             this.azureStorageBlobOptions = azureStorageBlobOptions;
         }
 
-        public async Task<UploadImageDto> GenerateSasTokenWithPermissionWrite(string fileExtencion, string containerName)
+        public async Task<UploadImageDto> GenerateSasTokenWithPermissionWrite(string fileExtension, string containerName)
         {
-            var guid = Guid.NewGuid();
-            var fileName = $"{guid}.{fileExtencion}";
-            CloudBlobContainer cloudBlobContainer = GetContainer(containerName);
+            var fileName = $"{Guid.NewGuid()}.{fileExtension}";
             var permissions = SharedAccessBlobPermissions.Write;
             var shareAccessBlobPolicy = new SharedAccessBlobPolicy()
             {
@@ -45,6 +43,7 @@ namespace Reenbit.ChuckNorris.Services
                 Permissions = permissions
             };
 
+            CloudBlobContainer cloudBlobContainer = GetContainer(containerName);
             string uploadUrl = String.Format("{0}/{1}{2}", cloudBlobContainer.Uri, fileName, cloudBlobContainer.GetSharedAccessSignature(shareAccessBlobPolicy, null));
             var uploadImageDto = new UploadImageDto
             {
@@ -104,13 +103,13 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        private static string GetSasForBlob(CloudBlockBlob blob, int sasMinutesValid)
+        private static string GetSasForBlob(CloudBlockBlob blob, int sasPeriodExpiration)
         {
             var sasToken = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
             {
                 Permissions = SharedAccessBlobPermissions.Read,
                 SharedAccessStartTime = DateTime.UtcNow.AddMinutes(StartValidTimeForSas),
-                SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(sasMinutesValid),
+                SharedAccessExpiryTime = DateTime.UtcNow.AddMinutes(sasPeriodExpiration),
             });
             return string.Format(CultureInfo.InvariantCulture, "{0}{1}", blob.Uri, sasToken);
         }

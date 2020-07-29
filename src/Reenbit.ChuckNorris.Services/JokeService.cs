@@ -137,7 +137,6 @@ namespace Reenbit.ChuckNorris.Services
                 var categories = categoryRepository.Find(c => jokeDto.Categories.Any(cd => cd == c.Id));
                 jokeRepository.Add(joke);
                 joke.JokeCategories = categories.Select(c => new JokeCategory() { Category = c, Joke = joke }).ToList();
-                await uow.SaveChangesAsync();
                 await AddImagesToJoke(jokeDto, joke);
                 await uow.SaveChangesAsync();
                 var returnJoke = mapper.Map<JokeDto>(joke);
@@ -159,14 +158,14 @@ namespace Reenbit.ChuckNorris.Services
                     }
 
                     var imageUrl = await mediaService.CopyFile(imageName,
-                                                               $"{joke.Id}-{imageName}",
+                                                               $"{imageName}",
                                                                this.azureStorageBlobOptions.Value.FileTempPath,
                                                                this.azureStorageBlobOptions.Value.FilePath);
                     if (!string.IsNullOrWhiteSpace(imageUrl))
                     {
                         JokeImage image = new JokeImage
                         {
-                            JokeId = joke.Id,
+                            Joke = joke,
                             Url = imageUrl
                         };
 

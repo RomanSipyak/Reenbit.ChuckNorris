@@ -26,9 +26,9 @@ namespace Reenbit.ChuckNorris.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetSasKey([FromQuery] string fileExtencion)
+        public async Task<IActionResult> GetSasKey([FromQuery] string fileExtension)
         {
-            var uploadImageDto = await mediaService.GenerateSasTokenWithPermissionWrite(fileExtencion, azureStorageBlobOptions.Value.FileTempPath);
+            var uploadImageDto = await mediaService.GenerateSasTokenWithPermissionWrite(fileExtension, azureStorageBlobOptions.Value.FileTempPath);
             return CreatedAtAction(nameof(GetSasKey), uploadImageDto);
         }
     }
