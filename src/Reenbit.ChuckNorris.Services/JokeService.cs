@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Reenbit.ChuckNorris.Services
@@ -183,7 +184,7 @@ namespace Reenbit.ChuckNorris.Services
                 var joke = (await jokeRepository.FindAndMapAsync(j => j,
                                                                  j => j.Id == jokeId,
                                                                  null,
-                                                                 new List<Expression<Func<Joke, object>>> { j => j.JokeCategories, j => j.UserFavorites }))
+                                                                 new List<Expression<Func<Joke, object>>> { j => j.JokeCategories, j => j.UserFavorites, j => j.JokeImages }))
                                                                  .FirstOrDefault();
                 if (joke != null)
                 {
@@ -199,6 +200,13 @@ namespace Reenbit.ChuckNorris.Services
 
                     if (joke.JokeImages.Count() != 0)
                     {
+                        Regex regex = new Regex(@"\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\.\w+", RegexOptions.IgnoreCase);
+                        var imagesNames = joke.JokeImages.Select(ji => regex.Match(ji.Url)).Select(m => m.Value);
+                        foreach (var imageName in imagesNames)
+                        {
+                            await this.mediaService.DeleteFile(azureStorageBlobOptions.Value.FilePath, imageName);
+                        }
+
                         jokeRepository.RemoveLinkedImages(joke.JokeImages);
                     }
 
