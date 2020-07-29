@@ -66,6 +66,13 @@ namespace Reenbit.ChuckNorris.Services
             return null;
         }
 
+        public async Task<bool> DeleteFile(string containerName, string blobDeleteName)
+        {
+            CloudBlobContainer cloudBlobContainer = GetContainer(containerName);
+            var result = await DeleteBlockBlobAsync(cloudBlobContainer, blobDeleteName);
+            return result;
+        }
+
         private string GenerateImageUrl(string containerName, string fileName)
         {
             CloudBlobContainer cloudBlobContainer = GetContainer(containerName);
@@ -93,6 +100,25 @@ namespace Reenbit.ChuckNorris.Services
                     destBlob = destinationCloudBlobContainer.GetBlockBlobReference(destinationName);
                     string copyId = await destBlob.StartCopyAsync(sourceBlob);
                     return true;
+                }
+
+                return false;
+            }
+            catch (StorageException e)
+            {
+                throw e;
+            }
+        }
+
+        private static async Task<bool> DeleteBlockBlobAsync(CloudBlobContainer container, string blobDeleteName)
+        {
+            try
+            {
+                if (container.GetBlockBlobReference(blobDeleteName).Exists())
+                {
+                    var blobForDelete = container.GetBlockBlobReference(blobDeleteName);
+                    var result = await blobForDelete.DeleteIfExistsAsync();
+                    return result;
                 }
 
                 return false;

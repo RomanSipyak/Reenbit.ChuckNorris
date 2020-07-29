@@ -25,6 +25,8 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
 
         void RemoveLinkedUserFavorites(ICollection<UserFavorite> userFavorites);
 
+        void RemoveLinkedImages(ICollection<JokeImage> jokeImages);
+
         Task UpdateJokeCategoriesAsync(Joke joke, ICollection<int> categories);
 
         Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId);

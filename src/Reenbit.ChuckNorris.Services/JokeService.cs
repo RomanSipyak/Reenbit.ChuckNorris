@@ -197,6 +197,11 @@ namespace Reenbit.ChuckNorris.Services
                         jokeRepository.RemoveLinkedUserFavorites(joke.UserFavorites);
                     }
 
+                    if (joke.JokeImages.Count() != 0)
+                    {
+                        jokeRepository.RemoveLinkedImages(joke.JokeImages);
+                    }
+
                     jokeRepository.Remove(joke);
                 }
 

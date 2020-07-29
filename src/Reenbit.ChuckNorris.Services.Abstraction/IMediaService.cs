@@ -12,5 +12,7 @@ namespace Reenbit.ChuckNorris.Services.Abstraction
         Task<UploadImageDto> GenerateSasTokenWithPermissionWrite(string fileExtension, string containerName);
 
         Task<string> CopyFile(string sourceName, string destinationName, string containerSourceName, string containerDestinationName);
+
+        Task<bool> DeleteFile(string containerName, string blobDeleteName);
     }
 }

@@ -101,6 +101,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             this.DbContext.Set<UserFavorite>().RemoveRange(userFavorites);
         }
 
+        public void RemoveLinkedImages(ICollection<JokeImage> jokeImages)
+        {
+            this.DbContext.Set<JokeImage>().RemoveRange(jokeImages);
+        }
+
         public async Task UpdateJokeCategoriesAsync(Joke joke, ICollection<int> categories)
         {
             var commonJokesCategories = joke.JokeCategories
