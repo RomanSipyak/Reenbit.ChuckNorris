@@ -31,6 +31,7 @@ namespace Reenbit.ChuckNorris.API.Extentions
             services.AddTransient<IJokeService, JokeService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IMediaService, MediaService>();
         }
 
         public static void RegisterDataAccess(this IServiceCollection services)
@@ -38,6 +39,7 @@ namespace Reenbit.ChuckNorris.API.Extentions
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
             services.AddScoped<IJokeRepository, JokeRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
         }
 
         public static void RegisterInfrastructure(this IServiceCollection services)

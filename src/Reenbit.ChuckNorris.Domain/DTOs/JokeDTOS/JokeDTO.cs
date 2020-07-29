@@ -16,9 +16,8 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
 
         public DateTime UpdatedAt { get; set; }
 
-        [JsonProperty("icon_url")]
-        public string IconUrl { get; set; }
-
         public ICollection<string> Categories { get; set; }
+
+        public ICollection<string> ImageUrls { get; set; }
     }
 }

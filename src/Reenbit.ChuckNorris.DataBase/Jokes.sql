@@ -1,8 +1,6 @@
 ﻿CREATE TABLE [dbo].[Jokes]
 (
 	[Id] INT IDENTITY(1,1) NOT NULL,
-    [IconUrl] NVARCHAR(2048) NULL,
-    [Url] NVARCHAR(2048) NULL,
     [Value] NVARCHAR(2000) NOT NULL,
     [CreatedAt] DATETIME2 NOT NULL,
     [UpdatedAt] DATETIME2 NOT NULL,

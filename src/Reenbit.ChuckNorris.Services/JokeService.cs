@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
+using Reenbit.ChuckNorris.Domain.ConfigClasses;
 using Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
 using Reenbit.ChuckNorris.Services.Abstraction;
@@ -19,7 +21,7 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly IMapper mapper;
 
-        private readonly UserManager<User> userManager;
+        private readonly IMediaService mediaService;
 
         private static readonly Random random = new Random();
 
@@ -31,11 +33,14 @@ namespace Reenbit.ChuckNorris.Services
 
         private const int TopThreeFavoriteJokes = 3;
 
-        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, UserManager<User> userManager)
+        private readonly IOptions<AzureStorageBlobOptions> azureStorageBlobOptions;
+
+        public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, IMediaService mediaService, IOptions<AzureStorageBlobOptions> azureStorageBlobOptions)
         {
             this.unitOfWorkFactory = unitOfWorkFactory;
             this.mapper = mapper;
-            this.userManager = userManager;
+            this.mediaService = mediaService;
+            this.azureStorageBlobOptions = azureStorageBlobOptions;
         }
 
         public async Task<JokeDto> GetRandomJokeAsync(string category)
@@ -132,10 +137,41 @@ namespace Reenbit.ChuckNorris.Services
                 var categories = categoryRepository.Find(c => jokeDto.Categories.Any(cd => cd == c.Id));
                 jokeRepository.Add(joke);
                 joke.JokeCategories = categories.Select(c => new JokeCategory() { Category = c, Joke = joke }).ToList();
+                await AddImagesToJoke(jokeDto, joke);
                 await uow.SaveChangesAsync();
                 var returnJoke = mapper.Map<JokeDto>(joke);
                 returnJoke.Categories = joke.JokeCategories.Select(jc => jc.Category.Title).ToList();
+                returnJoke.ImageUrls = joke.JokeImages.Select(i => i.Url).ToList();
                 return returnJoke;
+            }
+        }
+
+        private async Task AddImagesToJoke(CreateJokeDto jokeDto, Joke joke)
+        {
+            if (jokeDto.ImageNames.Count() != 0)
+            {
+                foreach (var imageName in jokeDto.ImageNames)
+                {
+                    if (string.IsNullOrWhiteSpace(imageName))
+                    {
+                        continue;
+                    }
+
+                    var imageUrl = await mediaService.CopyFile(imageName,
+                                                               $"{imageName}",
+                                                               this.azureStorageBlobOptions.Value.FileTempPath,
+                                                               this.azureStorageBlobOptions.Value.FilePath);
+                    if (!string.IsNullOrWhiteSpace(imageUrl))
+                    {
+                        JokeImage image = new JokeImage
+                        {
+                            Joke = joke,
+                            Url = imageUrl
+                        };
+
+                        joke.JokeImages.Add(image);
+                    }
+                }
             }
         }
 
@@ -241,7 +277,7 @@ namespace Reenbit.ChuckNorris.Services
                 var joke = (await jokeRepository.FindAndMapAsync(j => j,
                                                                 j => j.Id == jokeDto.Id,
                                                                 null,
-                                                                new List<Expression<Func<Joke, object>>> { j => j.JokeCategories}))
+                                                                new List<Expression<Func<Joke, object>>> { j => j.JokeCategories }))
                                                                 .FirstOrDefault();
                 if (joke == null)
                 {

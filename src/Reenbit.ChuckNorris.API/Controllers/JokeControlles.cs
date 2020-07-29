@@ -15,6 +15,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
     public class JokeControlles : BaseApiController
     {
         private readonly IJokeService jokeService;
+
         private readonly ICategoryService categoryService;
 
         public JokeControlles(IJokeService jokeService, ICategoryService categoryService)
@@ -79,7 +80,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpDelete]
         [Route("favorite/{favoriteJokeId}")]
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize]
         public async Task<IActionResult> DeleteJokefromFavorite([FromRoute] int favoriteJokeId)
         {
             await jokeService.DeleteJokeFromFavoriteAsync(favoriteJokeId, this.UserId);
@@ -120,6 +121,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateJoke(UpdateJokeDto updateJokeDto)
         {
             var jokeDto = await this.jokeService.UpdateJokeAsync(updateJokeDto);
@@ -128,6 +130,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpDelete]
         [Route("{jokeId}")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteJoke([FromRoute]int jokeId)
         {
             await this.jokeService.DeleteJokeAsync(jokeId);
@@ -136,7 +139,8 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpPost]
         [Route("categories")]
-        public async Task<IActionResult> CreateCategory(CreateCategoryDTO createCategoryDTO)
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> CreateCategory(CreateCategoryDto createCategoryDTO)
         {
             var categoryDto = await categoryService.CreateCategoryAsync(createCategoryDTO);
             return CreatedAtAction(nameof(CreateCategory), categoryDto);
@@ -144,6 +148,7 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         [HttpDelete]
         [Route("categories/{categoryId}")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteCategory([FromRoute]int categoryId)
         {
             await this.categoryService.DeleteCategoryAsync(categoryId);

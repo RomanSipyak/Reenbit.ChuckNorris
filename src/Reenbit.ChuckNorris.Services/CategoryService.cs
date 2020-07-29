@@ -26,16 +26,16 @@ namespace Reenbit.ChuckNorris.Services
             this.mapper = mapper;
         }
 
-        public async Task<ICollection<CategoryDTO>> GetAllCategoriesAsync()
+        public async Task<ICollection<CategoryDto>> GetAllCategoriesAsync()
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
-                return this.mapper.Map<ICollection<CategoryDTO>>(await categoryRepository.FindAndMapAsync(c => c));
+                return this.mapper.Map<ICollection<CategoryDto>>(await categoryRepository.FindAndMapAsync(c => c));
             }
         }
 
-        public async Task<CategoryDTO> CreateCategoryAsync(CreateCategoryDTO categoryDTO)
+        public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto categoryDTO)
         {
             using (IUnitOfWork uow = unitOfWorkFactory.CreateUnitOfWork())
             {
@@ -48,7 +48,7 @@ namespace Reenbit.ChuckNorris.Services
                 Category category = mapper.Map<Category>(categoryDTO);
                 categoryRepository.Add(category);
                 await uow.SaveChangesAsync();
-                var categoryDto = mapper.Map<CategoryDTO>(category);
+                var categoryDto = mapper.Map<CategoryDto>(category);
                 return categoryDto;
             }
         }

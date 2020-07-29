@@ -19,8 +19,8 @@ namespace Reenbit.ChuckNorris.Domain.DTOsProfiles
                                                .ForMember(desc => desc.LastName, opt => opt.MapFrom(src => src.User.LastName))
                                                .ForMember(desc => desc.Id, opt => opt.MapFrom(src => src.User.Id))
                                                .ForMember(desc => desc.Roles, opt => opt.MapFrom(src => src.Roles));
-            CreateMap<CreateCategoryDTO, Category>();
-            CreateMap<Category, CategoryDTO>();
+            CreateMap<CreateCategoryDto, Category>();
+            CreateMap<Category, CategoryDto>();
         }
     }
 }

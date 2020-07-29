@@ -9,9 +9,9 @@ namespace Reenbit.ChuckNorris.DataAccess.Mapping
         public void Configure(EntityTypeBuilder<Role> builder)
         {
             builder.HasMany(e => e.UserRoles)
-                .WithOne(e => e.Role)
-                .HasForeignKey(ur => ur.RoleId)
-                .IsRequired();
+                   .WithOne(e => e.Role)
+                   .HasForeignKey(ur => ur.RoleId)
+                   .IsRequired();
         }
     }
 }

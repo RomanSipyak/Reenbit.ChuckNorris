@@ -48,12 +48,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                                         select new JokeDto
                                         {
                                             Id = j.Id,
-                                            IconUrl = j.IconUrl,
-                                            Url = j.Url,
                                             Value = j.Value,
                                             CreatedAt = j.CreatedAt,
                                             UpdatedAt = j.UpdatedAt,
                                             Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList(),
+                                            ImageUrls = j.JokeImages.Select(i => i.Url).ToList(),
                                         })).Take(topNumber).ToListAsync();
             return favoriteJokes;
         }
@@ -71,12 +70,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             return j => new JokeDto
             {
                 Id = j.Id,
-                IconUrl = j.IconUrl,
-                Url = j.Url,
                 Value = j.Value,
                 CreatedAt = j.CreatedAt,
                 UpdatedAt = j.UpdatedAt,
-                Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList()
+                Categories = j.JokeCategories.Select(jc => jc.Category.Title).ToList(),
+                ImageUrls = j.JokeImages.Select(i => i.Url).ToList()
             };
         }
 
@@ -85,12 +83,11 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
             return uf => new JokeDto
             {
                 Id = uf.Joke.Id,
-                IconUrl = uf.Joke.IconUrl,
-                Url = uf.Joke.Url,
                 Value = uf.Joke.Value,
                 CreatedAt = uf.Joke.CreatedAt,
                 UpdatedAt = uf.Joke.UpdatedAt,
-                Categories = uf.Joke.JokeCategories.Select(jc => jc.Category.Title).ToList()
+                Categories = uf.Joke.JokeCategories.Select(jc => jc.Category.Title).ToList(),
+                ImageUrls = uf.Joke.JokeImages.Select(i => i.Url).ToList()
             };
         }
 
