@@ -34,6 +34,8 @@ namespace Reenbit.ChuckNorris.Services
 
         private const int TopThreeFavoriteJokes = 3;
 
+        private readonly Regex ImageNameRegex = new Regex(@"\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\.\w+", RegexOptions.IgnoreCase);
+
         private readonly IOptions<AzureStorageBlobOptions> azureStorageBlobOptions;
 
         public JokeService(IUnitOfWorkFactory unitOfWorkFactory, IMapper mapper, IMediaService mediaService, IOptions<AzureStorageBlobOptions> azureStorageBlobOptions)
@@ -135,10 +137,10 @@ namespace Reenbit.ChuckNorris.Services
                 var jokeRepository = uow.GetRepository<IJokeRepository>();
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
                 Joke joke = mapper.Map<Joke>(jokeDto);
-                var categories = categoryRepository.Find(c => jokeDto.Categories.Any(cd => cd == c.Id));
+                var categories = categoryRepository.Find(c => jokeDto.Categories.Distinct().Any(cd => cd == c.Id));
                 jokeRepository.Add(joke);
                 joke.JokeCategories = categories.Select(c => new JokeCategory() { Category = c, Joke = joke }).ToList();
-                await AddImagesToJoke(jokeDto, joke);
+                await AddImagesToJoke(jokeDto.ImageNames, joke);
                 await uow.SaveChangesAsync();
                 var returnJoke = mapper.Map<JokeDto>(joke);
                 returnJoke.Categories = joke.JokeCategories.Select(jc => jc.Category.Title).ToList();
@@ -147,11 +149,11 @@ namespace Reenbit.ChuckNorris.Services
             }
         }
 
-        private async Task AddImagesToJoke(CreateJokeDto jokeDto, Joke joke)
+        private async Task AddImagesToJoke(ICollection<string> imageNames, Joke joke)
         {
-            if (jokeDto.ImageNames.Count() != 0)
+            if (imageNames.Count() != 0)
             {
-                foreach (var imageName in jokeDto.ImageNames)
+                foreach (var imageName in imageNames.Distinct())
                 {
                     if (string.IsNullOrWhiteSpace(imageName))
                     {
@@ -200,8 +202,7 @@ namespace Reenbit.ChuckNorris.Services
 
                     if (joke.JokeImages.Count() != 0)
                     {
-                        Regex regex = new Regex(@"\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\.\w+", RegexOptions.IgnoreCase);
-                        var imagesNames = joke.JokeImages.Select(ji => regex.Match(ji.Url)).Select(m => m.Value);
+                        var imagesNames = joke.JokeImages.Select(ji => this.ImageNameRegex.Match(ji.Url)).Select(m => m.Value);
                         foreach (var imageName in imagesNames)
                         {
                             await this.mediaService.DeleteFile(azureStorageBlobOptions.Value.FilePath, imageName);
@@ -290,7 +291,7 @@ namespace Reenbit.ChuckNorris.Services
                 var joke = (await jokeRepository.FindAndMapAsync(j => j,
                                                                 j => j.Id == jokeDto.Id,
                                                                 null,
-                                                                new List<Expression<Func<Joke, object>>> { j => j.JokeCategories }))
+                                                                new List<Expression<Func<Joke, object>>> { j => j.JokeCategories, j => j.JokeImages }))
                                                                 .FirstOrDefault();
                 if (joke == null)
                 {
@@ -298,11 +299,20 @@ namespace Reenbit.ChuckNorris.Services
                 }
 
                 joke.Value = jokeDto.Value;
-                await jokeRepository.UpdateJokeCategoriesAsync(joke, jokeDto.Categories);
+                await jokeRepository.UpdateJokeCategoriesAsync(joke, jokeDto.Categories.Distinct().ToList());
+                var imageLinksForDeleting = jokeRepository.UpdateJokeAttachedImageUrls(joke, jokeDto.OldImagesLinks);
+                var imagesNames = imageLinksForDeleting.Select(ji => this.ImageNameRegex.Match(ji)).Select(m => m.Value);
+                foreach (var deleteImageName in imagesNames)
+                {
+                    await this.mediaService.DeleteFile(azureStorageBlobOptions.Value.FilePath, deleteImageName);
+                }
+
+                await this.AddImagesToJoke(jokeDto.NewImagesNames, joke);
                 jokeRepository.Update(joke);
                 await uow.SaveChangesAsync();
                 var categoryRepository = uow.GetRepository<ICategoryRepository>();
                 JokeDto returnJokeDto = this.mapper.Map<JokeDto>(joke);
+                returnJokeDto.ImageUrls = joke.JokeImages.Select(ji => ji.Url).ToList();
                 returnJokeDto.Categories = (await categoryRepository.FindAndMapAsync(c => c.Title, c => c.JokeCategories.Any(jc => jc.JokeId == joke.Id))).ToList();
                 return returnJokeDto;
             }
