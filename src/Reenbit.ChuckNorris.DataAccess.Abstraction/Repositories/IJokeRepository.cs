@@ -30,5 +30,13 @@ namespace Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories
         Task UpdateJokeCategoriesAsync(Joke joke, ICollection<int> categories);
 
         Task<ICollection<JokeDto>> FindFavoriteJokesForUser(int userId);
+
+        /// <summary>
+        /// Delete old Images and return list of deleted images
+        /// </summary>
+        /// <param name="joke"></param>
+        /// <param name="oldImagesLinks"></param>
+        /// <returns></returns>
+        ICollection<string> UpdateJokeAttachedImageUrls(Joke joke, ICollection<string> oldImagesLinks);
     }
 }

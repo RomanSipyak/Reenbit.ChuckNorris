@@ -121,5 +121,13 @@ namespace Reenbit.ChuckNorris.DataAccess.Repositories
                 .Select(c => new JokeCategory { CategoryId = c.Id, JokeId = joke.Id }).ToListAsync();
             joke.JokeCategories = joke.JokeCategories.Except(jokeCategoriesForDelete).Union(JokeCategoriesForAdding).ToList();
         }
+
+        public ICollection<string> UpdateJokeAttachedImageUrls(Joke joke, ICollection<string> oldImagesLinks)
+        {
+            var commonJokeImages = joke.JokeImages.Where(ji => oldImagesLinks.Any(il => il.Equals(ji.Url))).ToList();
+            joke.JokeImages = commonJokeImages;
+            var deletedJokeImages = oldImagesLinks.Except(commonJokeImages.Select(ji => ji.Url)).ToList();
+            return deletedJokeImages;
+        }
     }
 }

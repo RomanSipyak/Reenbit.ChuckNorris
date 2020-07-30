@@ -15,5 +15,9 @@ namespace Reenbit.ChuckNorris.Domain.DTOs.JokeDTOS
         public string IconUrl { get; set; }
 
         public ICollection<int> Categories { get; set; } = new List<int>();
+
+        public ICollection<string> NewImagesNames { get; set; } = new List<string>();
+
+        public ICollection<string> OldImagesLinks { get; set; } = new List<string>();
     }
 }
