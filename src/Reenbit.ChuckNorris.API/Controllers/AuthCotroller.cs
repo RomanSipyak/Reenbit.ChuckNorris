@@ -1,14 +1,19 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Reenbit.ChuckNorris.API.Authentication;
+using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Reenbit.ChuckNorris.API.Controllers
 {
@@ -22,10 +27,16 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
         private readonly IMapper mapper;
 
-        public AuthCotroller(IAuthService authService, IMapper mapper)
+        private readonly IWebHostEnvironment hostingEnvironment;
+
+        private readonly ILogger<AuthCotroller> logger;
+
+        public AuthCotroller(IAuthService authService, IMapper mapper, IWebHostEnvironment hostingEnvironment, ILogger<AuthCotroller> logger)
         {
             this.authService = authService;
             this.mapper = mapper;
+            this.hostingEnvironment = hostingEnvironment;
+            this.logger = logger;
         }
 
         [HttpPost, AllowAnonymous]
@@ -52,8 +63,33 @@ namespace Reenbit.ChuckNorris.API.Controllers
         [Route("signup")]
         public async Task<IActionResult> SignUp([FromBody]UserRegisterDto userRegisterDto)
         {
-            bool result  = await this.authService.RegisterUserAsync(userRegisterDto);
+            bool result = await this.authService.RegisterUserAsync(userRegisterDto);
             return Ok(result);
+        }
+
+        [HttpPost, AllowAnonymous]
+        [Route("resetPasswordRequest")]
+        public async Task<ActionResult<ActionExecutionResultDto>> ResetPasswordRequestAsync([FromBody] ResetPasswordRequestDto resetPasswordRequestDto)
+        {
+            var result = await authService.ResetPasswordRequestAsync(resetPasswordRequestDto);
+            return result.Succeeded ? Ok(result) : (ActionResult)BadRequest(result.Error);
+        }
+
+        [Route("verifyResetPasswordToken")]
+        [HttpGet, AllowAnonymous]
+        public async Task<ActionResult> VerifyResetPasswordToken([FromQuery]ValidateResetPasswordDto validateResetPasswordDto)
+        {
+            validateResetPasswordDto.Token = validateResetPasswordDto.Token.Replace(" ", "+");
+            var result = await this.authService.VerifyResetPasswordToken(validateResetPasswordDto);
+            return Ok(result);
+        }
+
+        [Route("changePassword")]
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> ChangePassword([FromBody]ResetPasswordDto resetPasswordDto)
+        {
+            var result = await this.authService.ChangePassword(resetPasswordDto);
+            return result.Succeeded ? Ok(result) : (IActionResult)BadRequest(result.Error);
         }
 
         private string GenerateToken(SignInUserDto user)
@@ -70,5 +106,5 @@ namespace Reenbit.ChuckNorris.API.Controllers
 
             return encodedJwt;
         }
-    } 
+    }
 }

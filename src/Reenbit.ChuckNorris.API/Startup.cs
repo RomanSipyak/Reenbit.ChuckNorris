@@ -39,6 +39,12 @@ namespace Reenbit.ChuckNorris.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.RegisterDependencies();
+            services.AddLogging(options =>
+            {
+                options.AddConsole();
+                options.SetMinimumLevel(LogLevel.Trace);
+            });
+
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
                                                                                           .AllowAnyMethod()
                                                                                           .AllowAnyHeader()));
@@ -47,11 +53,8 @@ namespace Reenbit.ChuckNorris.API
             var configurationManager = GetConfigurationManager(services);
             services.AddDbContext<ReenbitChuckNorrisDbContext>(options =>
                                                                options.UseSqlServer(configurationManager.DatabaseConnectionString));
-
             services.AddIdetityConfig();
-
             services.AddJwtBearerConfig();
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CHUCKNORRIS API", Version = "v1" });
@@ -63,6 +66,7 @@ namespace Reenbit.ChuckNorris.API
             });
 
             services.AddAzureStorageBlobOptions(Configuration);
+            services.AddEmailSettings(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Reenbit.ChuckNorris.Domain.DTOs;
 using Reenbit.ChuckNorris.Domain.DTOs.AuthDTOS;
 using Reenbit.ChuckNorris.Domain.DTOs.UserDTOS;
 using Reenbit.ChuckNorris.Domain.Entities;
+using Reenbit.ChuckNorris.Emails.Abstractions;
 using Reenbit.ChuckNorris.Services.Abstraction;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,14 @@ namespace Reenbit.ChuckNorris.Services
 
         private readonly IMapper mapper;
 
-        public AuthService(SignInManager<User> signInManager, UserManager<User> userManager, IMapper mapper)
+        private readonly IEmailService emailService;
+
+        public AuthService(SignInManager<User> signInManager, UserManager<User> userManager, IMapper mapper, IEmailService emailService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.mapper = mapper;
+            this.emailService = emailService;
         }
 
         public async Task<SignInUserDto> SignInAsync(SignInCredentialsDto signInCredentialsDto)
@@ -79,6 +84,59 @@ namespace Reenbit.ChuckNorris.Services
             }
 
             return createdUser.Succeeded;
+        }
+
+        public async Task<ActionExecutionResultDto> ResetPasswordRequestAsync(ResetPasswordRequestDto resetPasswordRequest)
+        {
+            var result = new ActionExecutionResultDto();
+            var user = await this.userManager.FindByEmailAsync(resetPasswordRequest.Email);
+            if (user != null)
+            {
+                var resetToken = await this.userManager.GeneratePasswordResetTokenAsync(user);
+                await this.emailService.SendRestorePasswordEmail(user, resetToken, resetPasswordRequest.ResetPageUrl);
+            }
+            else
+            {
+                result.Succeeded = false;
+                result.Error = "User was not found";
+            }
+
+            return result;
+        }
+
+        public async Task<ActionExecutionResultDto> ChangePassword(ResetPasswordDto resetPasswordDto)
+        {
+            var actionResult = new ActionExecutionResultDto();
+            var user = await this.userManager.FindByIdAsync(resetPasswordDto.UserId.ToString());
+            IdentityResult changePasswordResult = null;
+            if (user != null)
+            {
+                changePasswordResult = await this.userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.Password);
+            }
+
+            if (changePasswordResult == null || !changePasswordResult.Succeeded)
+            {
+                actionResult.Succeeded = false;
+                actionResult.Error = changePasswordResult?.Errors.Select(r => r.Description).FirstOrDefault() ?? "User was not found";
+            }
+
+            return actionResult;
+        }
+
+        public async Task<bool> VerifyResetPasswordToken(ValidateResetPasswordDto validateResetPasswordDto)
+        {
+            bool result = false;
+            var user = await this.userManager.FindByIdAsync(validateResetPasswordDto.UserId.ToString());
+            if (user != null)
+            {
+                result = await this.userManager.VerifyUserTokenAsync(
+                    user,
+                    this.userManager.Options.Tokens.PasswordResetTokenProvider,
+                    UserManager<User>.ResetPasswordTokenPurpose,
+                    validateResetPasswordDto.Token);
+            }
+
+            return result;
         }
     }
 }

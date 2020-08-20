@@ -5,6 +5,8 @@ using Reenbit.ChuckNorris.DataAccess.Abstraction;
 using Reenbit.ChuckNorris.DataAccess.Abstraction.Repositories;
 using Reenbit.ChuckNorris.DataAccess.Repositories;
 using Reenbit.ChuckNorris.Domain.DTOsProfiles;
+using Reenbit.ChuckNorris.Emails;
+using Reenbit.ChuckNorris.Emails.Abstractions;
 using Reenbit.ChuckNorris.Infrastructure;
 using Reenbit.ChuckNorris.Services;
 using Reenbit.ChuckNorris.Services.Abstraction;
@@ -28,6 +30,9 @@ namespace Reenbit.ChuckNorris.API.Extentions
 
         public static void RegisterServices(this IServiceCollection services)
         {
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ITemplateEngine, TemplateEngine>();
             services.AddTransient<IJokeService, JokeService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IAuthService, AuthService>();
